@@ -40,6 +40,7 @@ performance metrics
 
 ht, wd = 64, 64
 script_directory=os.path.dirname(__file__)
+#Base Folder - FallDetection
 project_directory=os.path.dirname(script_directory)
 
 def get_performance_metrics(sample, output, labels, window_len):
@@ -190,7 +191,7 @@ def get_global_performance_metrics(name, frame_stats, window_stats, window_len):
         video_metrics[0, j+1], video_metrics[1, j+1], video_metrics[2, j+1], video_metrics[3, j+1] = get_performance_values(window_mean_thres[j], window_std_thres[j], vid_labels)
         video_metrics[4, j+1] = j
     
-    pd.DataFrame(video_metrics).to_csv('{}\FinalResults\{}global_cross_context_results.csv'.format(project_directory,name))    
+    pd.DataFrame(video_metrics).to_csv('{}\Output\FinalResults\{}global_cross_context_results.csv'.format(project_directory,name))    
     return()
     
 
@@ -227,8 +228,8 @@ def get_total_performance_metrics(name, frame_stats, window_stats, window_len):
 
     #np.savetxt('results.csv', final_performance, delimiter=',', fmt='%d')
 
-    pd.DataFrame(final_performance_mean).to_csv('{}\FinalResults\{}results_mean.csv'.format(project_directory,name))
-    pd.DataFrame(final_performance_std).to_csv('{}\FinalResults\{}results_std.csv'.format(project_directory,name))
+    pd.DataFrame(final_performance_mean).to_csv('{}\Output\FinalResults\{}results_mean.csv'.format(project_directory,name))
+    pd.DataFrame(final_performance_std).to_csv('{}\Output\FinalResults\{}results_std.csv'.format(project_directory,name))
     
     return(final_performance_mean, final_performance_std)
 
@@ -266,7 +267,7 @@ def get_curves_and_thresholds(name, frame_stats, window_stats, window_len):
         plt.ylabel('True Positive Rate')
         plt.title('Receiver Operating Characteristic for {}'.format(data_option))
         plt.legend(loc="lower right")
-        plt.savefig('{}/FinalResults/{}{}ROC_AUC.png'.format(project_directory,name, data_option))
+        plt.savefig('{}/Output/FinalResults/{}{}ROC_AUC.png'.format(project_directory,name, data_option))
         
     def plot_PR_AUC(precision, recall, mean_AUPR, no_skill, data_option):
         plt.figure()
@@ -278,7 +279,7 @@ def get_curves_and_thresholds(name, frame_stats, window_stats, window_len):
         plt.ylabel('Precision')
         plt.title('Precision Recall Curve for {}'.format(data_option))
         plt.legend(loc="upper right")
-        plt.savefig('{}/FinalResults/{}{}PR_AUC.png'.format(project_directory,name, data_option))
+        plt.savefig('{}/Output/FinalResults/{}{}PR_AUC.png'.format(project_directory,name, data_option))
         
     # calculate metrics for Standard Deviation 
     roc_fpr, roc_tpr, roc_thresholds = roc_curve(y_true=frame_labels_flat, y_score=frame_std_flat, pos_label=1)
@@ -356,7 +357,7 @@ def get_curves_and_thresholds(name, frame_stats, window_stats, window_len):
     d = {'TPR': [TPR, std_TPR], 'FPR': [FPR, std_FPR], 'Precision': [Precision, std_Precision], 'Recall': [Recall, std_Recall], 
         'tn': [tn, std_tn], 'fp': [fp, std_fp], 'fn': [fn, std_fn], 'tp': [tp, std_tp]}
     df = pd.DataFrame(data=d)
-    pd.DataFrame(df).to_csv('{}\FinalResults\{}global_cross_context_classification_results.csv'.format(project_directory,name))
+    pd.DataFrame(df).to_csv('{}\Output\FinalResults\{}global_cross_context_classification_results.csv'.format(project_directory,name))
     return()
 
 
@@ -542,10 +543,10 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
     falls = []
     adl = []
     if fair_compairson == True:
-        shared_adl_vids = np.loadtxt('shared_adl_vids.txt').astype(int)
-        shared_fall_vids = np.loadtxt('shared_fall_vids.txt').astype(int)
-        day_fall_vids = np.loadtxt('day_fall_vids.txt').astype(int)
-        night_fall_vids = np.loadtxt('night_fall_vids.txt').astype(int)
+        shared_adl_vids = np.loadtxt('../Dataset/Metadata/shared_adl_vids.txt').astype(int)
+        shared_fall_vids = np.loadtxt('../Dataset/Metadata/shared_fall_vids.txt').astype(int)
+        day_fall_vids = np.loadtxt('../Dataset/Metadata/day_fall_vids.txt').astype(int)
+        night_fall_vids = np.loadtxt('../Dataset/Metadata/night_fall_vids.txt').astype(int)
         if TOD == "Day":
             tod_list = day_fall_vids
         if TOD == "Night":
@@ -555,13 +556,13 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
             
         #print(shared_fall_vids)
         # create list of all fall and nonfall folders
-        for (root, dirs, files) in os.walk("{}/Fall-Data/{}/Fall".format(project_directory,dset)):
+        for (root, dirs, files) in os.walk("{}/Dataset/Fall-Data/{}/Fall".format(project_directory,dset)):
             for dir in dirs:
                 x = re.findall('[0-9]+', dir)[0]
                 if (int(x) in shared_fall_vids) and (int(x) in tod_list):
                     falls.append(dir)
         
-        for (root, dirs, files) in os.walk("{}/Fall-Data/{}/NonFall".format(project_directory,dset)):
+        for (root, dirs, files) in os.walk("{}/Dataset/Fall-Data/{}/NonFall".format(project_directory,dset)):
             for dir in dirs:
                 x = re.findall('[0-9]+', dir)[0]
                 if int(x) in shared_adl_vids:
@@ -570,10 +571,10 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
         #print(adl)
     elif fair_compairson == False:
         # create list of all fall and nonfall folders
-        for (root, dirs, files) in os.walk("{}/Fall-Data/{}/Fall".format(project_directory,dset)):
+        for (root, dirs, files) in os.walk("{}/Dataset/Fall-Data/{}/Fall".format(project_directory,dset)):
             if len(dirs) > 0:
                 falls.extend(dirs)
-        for (root, dirs, files) in os.walk("{}/Fall-Data/{}/NonFall".format(project_directory,dset)):
+        for (root, dirs, files) in os.walk("{}/Dataset/Fall-Data/{}/NonFall".format(project_directory,dset)):
             if len(dirs) > 0:
                 adl.extend(dirs)
         #print(falls)
@@ -804,16 +805,16 @@ def create_multimodal_pytorch_dataset(names, dsets, window_len, fair_compairson,
         falls = []
         adl = []
         if fair_compairson == True:
-            shared_adl_vids = np.loadtxt('shared_adl_vids.txt').astype(int)
-            shared_fall_vids = np.loadtxt('shared_fall_vids.txt').astype(int)
+            shared_adl_vids = np.loadtxt('../Dataset/Metadata/shared_adl_vids.txt').astype(int)
+            shared_fall_vids = np.loadtxt('../Dataset/Metadata/shared_fall_vids.txt').astype(int)
             # create list of all fall and nonfall folders
-            for (root, dirs, files) in os.walk("{}/Fall-Data/{}/Fall".format(project_directory,dset)):
+            for (root, dirs, files) in os.walk("{}/Dataset/Fall-Data/{}/Fall".format(project_directory,dset)):
                 for dir in dirs:
                     x = re.findall('[0-9]+', dir)[0]
                     if int(x) in shared_fall_vids:
                         falls.append(dir)
             
-            for (root, dirs, files) in os.walk("{}/Fall-Data/{}/NonFall".format(project_directory,dset)):
+            for (root, dirs, files) in os.walk("{}/Dataset/Fall-Data/{}/NonFall".format(project_directory,dset)):
                 for dir in dirs:
                     x = re.findall('[0-9]+', dir)[0]
                     if int(x) in shared_adl_vids:
@@ -821,10 +822,10 @@ def create_multimodal_pytorch_dataset(names, dsets, window_len, fair_compairson,
 
         elif fair_compairson == False:
             # create list of all fall and nonfall folders
-            for (root, dirs, files) in os.walk("{}/Fall-Data/{}/Fall".format(project_directory,dset)):
+            for (root, dirs, files) in os.walk("{}/Dataset/Fall-Data/{}/Fall".format(project_directory,dset)):
                 if len(dirs) > 0:
                     falls.extend(dirs)
-            for (root, dirs, files) in os.walk("{}/Fall-Data/{}/NonFall".format(project_directory,dset)):
+            for (root, dirs, files) in os.walk("{}/Dataset/Fall-Data/{}/NonFall".format(project_directory,dset)):
                 if len(dirs) > 0:
                     adl.extend(dirs)
 

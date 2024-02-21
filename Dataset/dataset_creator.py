@@ -21,6 +21,7 @@ dset is going to be the compressed hp5y file name of your dataset
 # crawls location of drive for all the falls/nonfalls and the images 
 
 script_directory=os.path.dirname(__file__)
+#Base Folder - FallDetection
 project_directory=os.path.dirname(script_directory)
 
 def get_dir_lists(dset, folder_location):
@@ -47,7 +48,7 @@ def init_videos(img_width, img_height, raw, dset, folder_location):
         str dset: dataset to be loaded
     '''
 
-    path = '{}\\H5PY\\Data_set-{}-imgdim{}x{}.h5'.format(project_directory,dset, img_width, img_height) 
+    path = '{}\\Dataset\H5PY\\Data_set-{}-imgdim{}x{}.h5'.format(project_directory,dset, img_width, img_height) 
 
     vid_dir_list_0, vid_dir_list_1 = get_dir_lists(dset, folder_location)
     print(vid_dir_list_0,dset,folder_location)
@@ -244,7 +245,7 @@ for i in range(len(modalities)):
     # location of were your dataset is stored 
     modality = modalities[i]
     dset = dsets[i]
-    folder_location = '{}\Fall-Data\{}'.format(project_directory,modality)
+    folder_location = '{}\Dataset\Fall-Data\{}'.format(project_directory,modality)
     print(folder_location)
     print(modality)
 
