@@ -2,10 +2,15 @@ import os
 import glob
 
 import numpy as np
-import sys
 import cv2
 import h5py
 import re
+import sys
+
+sys.path.append(
+    os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
+from Code.parameters import project_directory,dataset_directory
+sys.path.remove(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 
 """ clear
 This file will create an hp5y file of your dataset.       
@@ -19,10 +24,6 @@ dset is going to be the compressed hp5y file name of your dataset
 """
 
 # crawls location of drive for all the falls/nonfalls and the images 
-
-script_directory=os.path.dirname(__file__)
-#Base Folder - FallDetection
-project_directory=os.path.dirname(script_directory)
 
 def get_dir_lists(dset, folder_location):
     
@@ -248,7 +249,7 @@ for i in range(len(modalities)):
     # location of were your dataset is stored 
     modality = modalities[i]
     dset = dsets[i]
-    folder_location = '{}\Dataset\Fall-Data\{}'.format(project_directory,modality)
+    folder_location = '{}\Dataset\Fall-Data\{}'.format(dataset_directory,modality)
     print(folder_location)
     print(modality)
 

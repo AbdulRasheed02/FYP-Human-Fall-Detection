@@ -1,5 +1,16 @@
 import torch
 import torch.nn as nn
+import os
+
+script_directory=os.path.dirname(__file__)
+project_directory=os.path.dirname(script_directory) #Base Folder - FallDetection
+hdd_directory = "F:\FYP Datasets\MUVIM"
+
+access_dataset_from_external_hdd=False
+if(access_dataset_from_external_hdd):
+    dataset_directory=hdd_directory
+else:
+    dataset_directory=project_directory 
 
 window_len = 8
 stride = 1

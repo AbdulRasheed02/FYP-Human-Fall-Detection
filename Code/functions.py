@@ -27,6 +27,7 @@ from sklearn.metrics import (
     precision_recall_curve,
 )
 import pdb
+from parameters import project_directory,dataset_directory
 
 """
  Function that takes inputs (sample, reconstruction, and label)
@@ -39,9 +40,6 @@ performance metrics
 """
 
 ht, wd = 64, 64
-script_directory=os.path.dirname(__file__)
-#Base Folder - FallDetection
-project_directory=os.path.dirname(script_directory)
 
 def get_performance_metrics(sample, output, labels, window_len):
     recon_data = output.reshape(output.shape[1], window_len, ht * wd)
@@ -556,13 +554,13 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
             
         #print(shared_fall_vids)
         # create list of all fall and nonfall folders
-        for (root, dirs, files) in os.walk("{}/Dataset/Fall-Data/{}/Fall".format(project_directory,dset)):
+        for (root, dirs, files) in os.walk("{}/Dataset/Fall-Data/{}/Fall".format(dataset_directory,dset)):
             for dir in dirs:
                 x = re.findall('[0-9]+', dir)[0]
                 if (int(x) in shared_fall_vids) and (int(x) in tod_list):
                     falls.append(dir)
         
-        for (root, dirs, files) in os.walk("{}/Dataset/Fall-Data/{}/NonFall".format(project_directory,dset)):
+        for (root, dirs, files) in os.walk("{}/Dataset/Fall-Data/{}/NonFall".format(dataset_directory,dset)):
             for dir in dirs:
                 x = re.findall('[0-9]+', dir)[0]
                 if int(x) in shared_adl_vids:
@@ -571,10 +569,10 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
         #print(adl)
     elif fair_compairson == False:
         # create list of all fall and nonfall folders
-        for (root, dirs, files) in os.walk("{}/Dataset/Fall-Data/{}/Fall".format(project_directory,dset)):
+        for (root, dirs, files) in os.walk("{}/Dataset/Fall-Data/{}/Fall".format(dataset_directory,dset)):
             if len(dirs) > 0:
                 falls.extend(dirs)
-        for (root, dirs, files) in os.walk("{}/Dataset/Fall-Data/{}/NonFall".format(project_directory,dset)):
+        for (root, dirs, files) in os.walk("{}/Dataset/Fall-Data/{}/NonFall".format(dataset_directory,dset)):
             if len(dirs) > 0:
                 adl.extend(dirs)
         #print(falls)
@@ -808,13 +806,13 @@ def create_multimodal_pytorch_dataset(names, dsets, window_len, fair_compairson,
             shared_adl_vids = np.loadtxt('../Dataset/Metadata/shared_adl_vids.txt').astype(int)
             shared_fall_vids = np.loadtxt('../Dataset/Metadata/shared_fall_vids.txt').astype(int)
             # create list of all fall and nonfall folders
-            for (root, dirs, files) in os.walk("{}/Dataset/Fall-Data/{}/Fall".format(project_directory,dset)):
+            for (root, dirs, files) in os.walk("{}/Dataset/Fall-Data/{}/Fall".format(dataset_directory,dset)):
                 for dir in dirs:
                     x = re.findall('[0-9]+', dir)[0]
                     if int(x) in shared_fall_vids:
                         falls.append(dir)
             
-            for (root, dirs, files) in os.walk("{}/Dataset/Fall-Data/{}/NonFall".format(project_directory,dset)):
+            for (root, dirs, files) in os.walk("{}/Dataset/Fall-Data/{}/NonFall".format(dataset_directory,dset)):
                 for dir in dirs:
                     x = re.findall('[0-9]+', dir)[0]
                     if int(x) in shared_adl_vids:
@@ -822,10 +820,10 @@ def create_multimodal_pytorch_dataset(names, dsets, window_len, fair_compairson,
 
         elif fair_compairson == False:
             # create list of all fall and nonfall folders
-            for (root, dirs, files) in os.walk("{}/Dataset/Fall-Data/{}/Fall".format(project_directory,dset)):
+            for (root, dirs, files) in os.walk("{}/Dataset/Fall-Data/{}/Fall".format(dataset_directory,dset)):
                 if len(dirs) > 0:
                     falls.extend(dirs)
-            for (root, dirs, files) in os.walk("{}/Dataset/Fall-Data/{}/NonFall".format(project_directory,dset)):
+            for (root, dirs, files) in os.walk("{}/Dataset/Fall-Data/{}/NonFall".format(dataset_directory,dset)):
                 if len(dirs) > 0:
                     adl.extend(dirs)
 
