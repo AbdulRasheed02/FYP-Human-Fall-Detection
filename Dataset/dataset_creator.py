@@ -236,10 +236,13 @@ def flip_windowed_arr(windowed_data):
     return flipped_data_windowed
 
 
-modalities = ['Thermal' ] #, IP
+# Directory names of the raw dataset from the Fall-Data folder
+# modalities = ['Thermal','ONI_IR','IP'] 
+modalities = ['Thermal' ]
 
-dsets = ['Thermal_T3' ] # , 'IP_T'
-
+# Name of the H5PY files to be created
+# dsets = ['Thermal_T3','ONI_IR_T','IP_T']
+dsets = ['Thermal_T3' ]
 
 for i in range(len(modalities)):
     # location of were your dataset is stored 
