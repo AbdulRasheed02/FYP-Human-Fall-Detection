@@ -1,0 +1,5 @@
+//Export anaconda environment file. Run from Base Directory.
+conda env export > ./Environment_Configs/environment2.yml
+
+//Export Jupyter Output as HTML file. Then open in Chrome and save as PDF. Save the ipynb file and then Run from Base Directory.
+jupyter nbconvert --no-input --output-dir='Output/Jupyter_PDF_Output/Base_3DCAE' --to html Code\single_modality.ipynb

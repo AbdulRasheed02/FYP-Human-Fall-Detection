@@ -3,10 +3,10 @@ import torch.nn as nn
 import os
 
 script_directory=os.path.dirname(__file__)
-project_directory=os.path.dirname(script_directory) #Base Folder - FallDetection
-hdd_directory = "F:\FYP Datasets\MUVIM"
+project_directory=os.path.dirname(script_directory) # Base Folder - FallDetection
+hdd_directory = "F:\FYP Datasets\MUVIM" # Change to your HDD Directory
 
-access_dataset_from_external_hdd=False
+access_dataset_from_external_hdd=True
 if(access_dataset_from_external_hdd):
     dataset_directory=hdd_directory
 else:
@@ -23,6 +23,6 @@ learning_rate = 0.0002
 num_epochs = 20
 chunk_size = 64
 forward_chunk = 8 
-forward_chunk_size = 8 # this is smaller due to memory constrains 
+forward_chunk_size = 8 # This is smaller due to memory constrains 
 
 loss_fn = nn.MSELoss()
