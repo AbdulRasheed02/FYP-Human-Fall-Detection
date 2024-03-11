@@ -27,7 +27,7 @@ from sklearn.metrics import (
     precision_recall_curve,
 )
 import pdb
-from parameters import project_directory, dataset_directory
+from parameters import project_directory, dataset_directory, batch_size
 
 """
  Function that takes inputs (sample, reconstruction, and label)
@@ -42,16 +42,13 @@ performance metrics
 ht, wd = 64, 64
 
 
+# compute performance metrics for a set of original samples (sample) and reconstructed outputs (output)
 def get_performance_metrics(sample, output, labels, window_len):
     recon_data = output.reshape(output.shape[1], window_len, ht * wd)
     sample_data = sample.reshape(sample.shape[1], window_len, ht * wd)
     labels = shape_labels(labels)
-    window_std, window_mean, window_labels = get_window_metrics(
-        sample_data, recon_data, labels, window_len
-    )
-    frame_std, frame_mean, frame_labels = get_frame_metrics(
-        sample_data, recon_data, labels, window_len
-    )
+    window_std, window_mean, window_labels = get_window_metrics(sample_data, recon_data, labels, window_len)
+    frame_std, frame_mean, frame_labels = get_frame_metrics(sample_data, recon_data, labels, window_len)
     return (frame_std, frame_mean, frame_labels, window_std, window_mean, window_labels)
 
 
@@ -59,12 +56,8 @@ def get_multimodal_preformance_metrics(sample, output, labels, window_len):
     recon_data = output.reshape(output.shape[0], output.shape[1], window_len, ht * wd)
     sample_data = sample.reshape(sample.shape[0], sample.shape[1], window_len, ht * wd)
     labels = shape_labels(labels)
-    window_std, window_mean, window_labels = get_multimodal_window_metrics(
-        sample_data, recon_data, labels, window_len
-    )
-    frame_std, frame_mean, frame_labels = get_multimodal_frame_metrics(
-        sample_data, recon_data, labels, window_len
-    )
+    window_std, window_mean, window_labels = get_multimodal_window_metrics(sample_data, recon_data, labels, window_len)
+    frame_std, frame_mean, frame_labels = get_multimodal_frame_metrics(sample_data, recon_data, labels, window_len)
     return (frame_std, frame_mean, frame_labels, window_std, window_mean, window_labels)
 
 
@@ -209,15 +202,11 @@ def get_global_performance_metrics(name, frame_stats, window_stats, window_len):
             video_metrics[1, j + 1],
             video_metrics[2, j + 1],
             video_metrics[3, j + 1],
-        ) = get_performance_values(
-            window_mean_thres[j], window_std_thres[j], vid_labels
-        )
+        ) = get_performance_values(window_mean_thres[j], window_std_thres[j], vid_labels)
         video_metrics[4, j + 1] = j
 
     pd.DataFrame(video_metrics).to_csv(
-        "{}\Output\FinalResults\{}global_cross_context_results.csv".format(
-            project_directory, name
-        )
+        "{}\Output\FinalResults\{}global_cross_context_results.csv".format(project_directory, name)
     )
     return ()
 
@@ -256,18 +245,12 @@ def get_total_performance_metrics(name, frame_stats, window_stats, window_len):
                 video_metrics[i, 1, j],
                 video_metrics[i, 2, j],
                 video_metrics[i, 3, j],
-            ) = get_performance_values(
-                mean_window_error[j - 1], std_window_error[j - 1], vid_labels
-            )
+            ) = get_performance_values(mean_window_error[j - 1], std_window_error[j - 1], vid_labels)
             video_metrics[i, 4, j] = j
 
     video_metrics[video_metrics == 0] = np.nan
-    final_performance_mean = np.nanmean(
-        video_metrics, axis=0
-    )  # get the mean performance across all videos
-    final_performance_std = np.nanstd(
-        video_metrics, axis=0
-    )  # get the standard dev for each mean
+    final_performance_mean = np.nanmean(video_metrics, axis=0)  # get the mean performance across all videos
+    final_performance_std = np.nanstd(video_metrics, axis=0)  # get the standard dev for each mean
 
     # np.savetxt('results.csv', final_performance, delimiter=',', fmt='%d')
 
@@ -282,14 +265,10 @@ def get_total_performance_metrics(name, frame_stats, window_stats, window_len):
 
 
 def late_fusion_performance_metrics(output, labels):
-    roc_fpr, roc_tpr, roc_thresholds = roc_curve(
-        y_true=labels[: len(output)], y_score=output, pos_label=1
-    )
+    roc_fpr, roc_tpr, roc_thresholds = roc_curve(y_true=labels[: len(output)], y_score=output, pos_label=1)
     mean_AUROC = auc(roc_fpr, roc_tpr)
 
-    precision, recall, pr_thresholds = precision_recall_curve(
-        labels[: len(output)], output, pos_label=1
-    )
+    precision, recall, pr_thresholds = precision_recall_curve(labels[: len(output)], output, pos_label=1)
     mean_AUPR = auc(recall, precision)
 
     return (mean_AUROC, mean_AUPR)
@@ -324,11 +303,7 @@ def get_curves_and_thresholds(name, frame_stats, window_stats, window_len):
         plt.ylabel("True Positive Rate")
         plt.title("Receiver Operating Characteristic for {}".format(data_option))
         plt.legend(loc="lower right")
-        plt.savefig(
-            "{}/Output/FinalResults/{}{}ROC_AUC.png".format(
-                project_directory, name, data_option
-            )
-        )
+        plt.savefig("{}/Output/FinalResults/{}{}ROC_AUC.png".format(project_directory, name, data_option))
 
     def plot_PR_AUC(precision, recall, mean_AUPR, no_skill, data_option):
         plt.figure()
@@ -338,32 +313,22 @@ def get_curves_and_thresholds(name, frame_stats, window_stats, window_len):
             linestyle="--",
             label="No Skill (area = %0.4f)" % no_skill,
         )
-        plt.plot(
-            recall, precision, marker=".", label="AUPR curve (area = %0.4f)" % mean_AUPR
-        )
+        plt.plot(recall, precision, marker=".", label="AUPR curve (area = %0.4f)" % mean_AUPR)
         plt.xlim([0.0, 1.0])
         plt.ylim([0.0, max(precision) / 5])
         plt.xlabel("Recall")
         plt.ylabel("Precision")
         plt.title("Precision Recall Curve for {}".format(data_option))
         plt.legend(loc="upper right")
-        plt.savefig(
-            "{}/Output/FinalResults/{}{}PR_AUC.png".format(
-                project_directory, name, data_option
-            )
-        )
+        plt.savefig("{}/Output/FinalResults/{}{}PR_AUC.png".format(project_directory, name, data_option))
 
     # calculate metrics for Standard Deviation
-    roc_fpr, roc_tpr, roc_thresholds = roc_curve(
-        y_true=frame_labels_flat, y_score=frame_std_flat, pos_label=1
-    )
+    roc_fpr, roc_tpr, roc_thresholds = roc_curve(y_true=frame_labels_flat, y_score=frame_std_flat, pos_label=1)
     std_AUROC = auc(roc_fpr, roc_tpr)
     data_option = "STD of Reconstruction Error"
     plot_ROC_AUC(roc_fpr, roc_tpr, std_AUROC, data_option)
 
-    precision, recall, pr_thresholds = precision_recall_curve(
-        frame_labels_flat, frame_std_flat, pos_label=1
-    )
+    precision, recall, pr_thresholds = precision_recall_curve(frame_labels_flat, frame_std_flat, pos_label=1)
     data_option = "STD of Reconstruction Error"
     no_skill = frame_labels_flat.count(1) / len(frame_labels_flat)
     mean_AUPR = auc(recall, precision)
@@ -385,9 +350,7 @@ def get_curves_and_thresholds(name, frame_stats, window_stats, window_len):
         else:
             frame_std_flat[i] = 0
 
-    std_tn, std_fp, std_fn, std_tp = confusion_matrix(
-        frame_labels_flat, frame_std_flat
-    ).ravel()  # , labels=[0,1]
+    std_tn, std_fp, std_fn, std_tp = confusion_matrix(frame_labels_flat, frame_std_flat).ravel()  # , labels=[0,1]
     std_TPR = std_tp / (std_tp + std_fn)
     std_FPR = std_fp / (std_fp + std_tn)
     std_Precision = std_tp / (std_tp + std_fp)
@@ -395,25 +358,19 @@ def get_curves_and_thresholds(name, frame_stats, window_stats, window_len):
     print("----------------------------------")
     print("STD Global Classification Results")
     print(
-        "TPR {:.3f}, FPR {:.3f}, Precision {:.3f}, Recall {:.3f}".format(
-            std_TPR, std_FPR, std_Precision, std_Recall
-        )
+        "TPR {:.3f}, FPR {:.3f}, Precision {:.3f}, Recall {:.3f}".format(std_TPR, std_FPR, std_Precision, std_Recall)
     )
     print("tn {}, fp {}, fn {}, tp {}".format(std_tn, std_fp, std_fn, std_tp))
     print("std_AUROC  {:.3f}".format(std_AUROC))
     print("----------------------------------")
 
     # calculate the Mean AUC
-    roc_fpr, roc_tpr, roc_thresholds = roc_curve(
-        y_true=frame_labels_flat, y_score=frame_mean_flat, pos_label=1
-    )
+    roc_fpr, roc_tpr, roc_thresholds = roc_curve(y_true=frame_labels_flat, y_score=frame_mean_flat, pos_label=1)
     mean_AUROC = auc(roc_fpr, roc_tpr)
     data_option = "Mean of Reconstruction Error"
     plot_ROC_AUC(roc_fpr, roc_tpr, mean_AUROC, data_option)
 
-    precision, recall, thresholds = precision_recall_curve(
-        frame_labels_flat, frame_mean_flat, pos_label=1
-    )
+    precision, recall, thresholds = precision_recall_curve(frame_labels_flat, frame_mean_flat, pos_label=1)
     data_option = "Mean of Reconstruction Error"
     no_skill = frame_labels_flat.count(1) / len(frame_labels_flat)
     mean_AUPR = auc(recall, precision)
@@ -435,11 +392,7 @@ def get_curves_and_thresholds(name, frame_stats, window_stats, window_len):
     Recall = tp / (tp + fn)
     print("----------------------------------")
     print("Mean Global Classification Results")
-    print(
-        "TPR {:.3f}, FPR {:.3f}, Precision {:.3f}, Recall {:.3f}".format(
-            TPR, FPR, Precision, Recall
-        )
-    )
+    print("TPR {:.3f}, FPR {:.3f}, Precision {:.3f}, Recall {:.3f}".format(TPR, FPR, Precision, Recall))
     print("tn {}, fp {}, fn {}, tp {}".format(tn, fp, fn, tp))
     print("mean_AUROC {:.3f}".format(mean_AUROC))
     print("----------------------------------")
@@ -456,9 +409,7 @@ def get_curves_and_thresholds(name, frame_stats, window_stats, window_len):
     }
     df = pd.DataFrame(data=d)
     pd.DataFrame(df).to_csv(
-        "{}\Output\FinalResults\{}global_cross_context_classification_results.csv".format(
-            project_directory, name
-        )
+        "{}\Output\FinalResults\{}global_cross_context_classification_results.csv".format(project_directory, name)
     )
     return ()
 
@@ -466,25 +417,17 @@ def get_curves_and_thresholds(name, frame_stats, window_stats, window_len):
 def get_performance_values(vid_mean, vid_std, vid_labels):
 
     # calculate metrics for Standard Deviation
-    std_fpr, std_tpr, std_thresholds = roc_curve(
-        y_true=vid_labels[: len(vid_std)], y_score=vid_std, pos_label=1
-    )
+    std_fpr, std_tpr, std_thresholds = roc_curve(y_true=vid_labels[: len(vid_std)], y_score=vid_std, pos_label=1)
     std_AUROC = auc(std_fpr, std_tpr)
 
-    std_precision, std_recall, thresholds = precision_recall_curve(
-        vid_labels[: len(vid_std)], vid_std
-    )
+    std_precision, std_recall, thresholds = precision_recall_curve(vid_labels[: len(vid_std)], vid_std)
     std_AUPR = auc(std_recall, std_precision)
 
     # calculate the Mean AUC
-    fpr, tpr, thresholds = roc_curve(
-        y_true=vid_labels[: len(vid_std)], y_score=vid_mean, pos_label=1
-    )
+    fpr, tpr, thresholds = roc_curve(y_true=vid_labels[: len(vid_std)], y_score=vid_mean, pos_label=1)
     mean_AUROC = auc(fpr, tpr)
 
-    mean_precision, mean_recall, thresholds = precision_recall_curve(
-        vid_labels[: len(vid_std)], vid_mean
-    )
+    mean_precision, mean_recall, thresholds = precision_recall_curve(vid_labels[: len(vid_std)], vid_mean)
     mean_AUPR = auc(mean_recall, mean_precision)
     data_option = "Mean Err"
 
@@ -549,9 +492,7 @@ def animate(test_data, recons_seq, frame_mean, dset, start_time):
     )
 
 
-def animate_fall_detect_present(
-    testfall, recons, scores, win_len, threshold=0, to_save="./test.mp4"
-):
+def animate_fall_detect_present(testfall, recons, scores, win_len, threshold=0, to_save="./test.mp4"):
     """
     Pass in data for single video, recons is recons frames, scores is x_std or x_mean etc.
     Threshold is RRE, mean, etc..
@@ -643,22 +584,15 @@ def animate_fall_detect_present(
     # return ani
 
 
-def create_pytorch_dataset(
-    name, dset, path, window_len, fair_compairson, stride, TOD="Both"
-):
+# Load the H5PY dataset into a pytorch dataset class.
+def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride, TOD="Both"):
     falls = []
     adl = []
-    if fair_compairson == True:
-        shared_adl_vids = np.loadtxt("../Dataset/Metadata/shared_adl_vids.txt").astype(
-            int
-        )
-        shared_fall_vids = np.loadtxt(
-            "../Dataset/Metadata/shared_fall_vids.txt"
-        ).astype(int)
+    if fair_compairson == True:  #  Load specific lists of fall and non-fall video directories based on time of day.
+        shared_adl_vids = np.loadtxt("../Dataset/Metadata/shared_adl_vids.txt").astype(int)
+        shared_fall_vids = np.loadtxt("../Dataset/Metadata/shared_fall_vids.txt").astype(int)
         day_fall_vids = np.loadtxt("../Dataset/Metadata/day_fall_vids.txt").astype(int)
-        night_fall_vids = np.loadtxt("../Dataset/Metadata/night_fall_vids.txt").astype(
-            int
-        )
+        night_fall_vids = np.loadtxt("../Dataset/Metadata/night_fall_vids.txt").astype(int)
         if TOD == "Day":
             tod_list = day_fall_vids
         if TOD == "Night":
@@ -667,49 +601,41 @@ def create_pytorch_dataset(
             tod_list = shared_fall_vids
 
         # print(shared_fall_vids)
-        # create list of all fall and nonfall folders
-        for root, dirs, files in os.walk(
-            "{}/Dataset/Fall-Data/{}/Fall".format(dataset_directory, dset)
-        ):
+        # create specfic list of fall folders and nonfall folders (Day or Night or Shared)
+        for root, dirs, files in os.walk("{}/Dataset/Fall-Data/{}/Fall".format(dataset_directory, dset)):
             for dir in dirs:
                 x = re.findall("[0-9]+", dir)[0]
                 if (int(x) in shared_fall_vids) and (int(x) in tod_list):
                     falls.append(dir)
 
-        for root, dirs, files in os.walk(
-            "{}/Dataset/Fall-Data/{}/NonFall".format(dataset_directory, dset)
-        ):
+        for root, dirs, files in os.walk("{}/Dataset/Fall-Data/{}/NonFall".format(dataset_directory, dset)):
             for dir in dirs:
                 x = re.findall("[0-9]+", dir)[0]
                 if int(x) in shared_adl_vids:
                     adl.append(dir)
         # print(falls)
         # print(adl)
-    elif fair_compairson == False:
+    elif fair_compairson == False:  # Load all fall and non-fall video directories.
         # create list of all fall and nonfall folders
-        for root, dirs, files in os.walk(
-            "{}/Dataset/Fall-Data/{}/Fall".format(dataset_directory, dset)
-        ):
+        for root, dirs, files in os.walk("{}/Dataset/Fall-Data/{}/Fall".format(dataset_directory, dset)):
             if len(dirs) > 0:
                 falls.extend(dirs)
-        for root, dirs, files in os.walk(
-            "{}/Dataset/Fall-Data/{}/NonFall".format(dataset_directory, dset)
-        ):
+        for root, dirs, files in os.walk("{}/Dataset/Fall-Data/{}/NonFall".format(dataset_directory, dset)):
             if len(dirs) > 0:
                 adl.extend(dirs)
         # print(falls)
         # print(adl)
 
-    x_data_fall = []
-    y_data_fall = []
+    x_data_fall = []  # Video data
+    y_data_fall = []  # Label
     x_data_adl = []
     y_data_adl = []
-    x_info_fall = []
+    x_info_fall = []  # Directory name/number
     x_info_adl = []
 
     # path = "processed_data\data_set-{}-imgdim64x64.h5".format(name)
 
-    # load in images of falls
+    # Loop through fall and non-fall directories, loading video data and labels into respective lists.
     with h5py.File(path, "r") as hf:
         data_dict = hf["{}/Processed/Split_by_video".format(name)]
         # print(data_dict.keys())
@@ -794,11 +720,12 @@ def create_pytorch_dataset(
 
     # print(len(x_data_fall))
     # print(len(x_data_adl))
-    Test_Dataset = Dataset(y_data_fall, x_data_fall, window=window_len)
-    test_dataloader = data.DataLoader(Test_Dataset, batch_size=1)
+
+    Test_Dataset = Dataset(y_data_fall, x_data_fall, window=window_len)  # Parameters - Labels, Data, Window length
+    test_dataloader = data.DataLoader(Test_Dataset, batch_size)
 
     Train_Dataset = Dataset(y_data_adl, x_data_adl, window=window_len)
-    train_dataloader = data.DataLoader(Train_Dataset, batch_size=1)
+    train_dataloader = data.DataLoader(Train_Dataset, batch_size)
 
     return (Test_Dataset, test_dataloader, Train_Dataset, train_dataloader)
 
@@ -830,32 +757,22 @@ def late_fusion_performance_metricsV4(output, original, window_len, labels):
     x_std = frame_scores[:, 1]
     x_mean = frame_scores[:, 0]
 
-    roc_fpr, roc_tpr, roc_thresholds = roc_curve(
-        y_true=labels[:-1], y_score=x_mean, pos_label=1
-    )
+    roc_fpr, roc_tpr, roc_thresholds = roc_curve(y_true=labels[:-1], y_score=x_mean, pos_label=1)
     mean_AUROC = auc(roc_fpr, roc_tpr)
 
-    precision, recall, pr_thresholds = precision_recall_curve(
-        labels[:-1], x_mean, pos_label=1
-    )
+    precision, recall, pr_thresholds = precision_recall_curve(labels[:-1], x_mean, pos_label=1)
     mean_AUPR = auc(recall, precision)
 
-    roc_fpr, roc_tpr, roc_thresholds = roc_curve(
-        y_true=labels[:-1], y_score=x_std, pos_label=1
-    )
+    roc_fpr, roc_tpr, roc_thresholds = roc_curve(y_true=labels[:-1], y_score=x_std, pos_label=1)
     std_AUROC = auc(roc_fpr, roc_tpr)
 
-    precision, recall, pr_thresholds = precision_recall_curve(
-        labels[:-1], x_std, pos_label=1
-    )
+    precision, recall, pr_thresholds = precision_recall_curve(labels[:-1], x_std, pos_label=1)
     std_AUPR = auc(recall, precision)
 
     return (mean_AUROC, mean_AUPR, std_AUROC, std_AUPR)
 
 
-def create_multimodal_pytorch_dataset(
-    names, dsets, window_len, fair_compairson, stride
-):
+def create_multimodal_pytorch_dataset(names, dsets, window_len, fair_compairson, stride):
 
     class Multi_Dataset(data.Dataset):
         "Characterizes a dataset for PyTorch"
@@ -891,9 +808,7 @@ def create_multimodal_pytorch_dataset(
                         max_length = len(x_data[k][vid])
                 for k in range(len(x_data)):
                     while len(x_data[k][vid]) < max_length:
-                        x_data[k][vid] = np.pad(
-                            x_data[k][vid], [(0, 1), (0, 0), (0, 0), (0, 0)], "mean"
-                        )  # , (0,0)
+                        x_data[k][vid] = np.pad(x_data[k][vid], [(0, 1), (0, 0), (0, 0), (0, 0)], "mean")  # , (0,0)
                         y_data[k][vid] = np.append(y_data[k][vid], 0)  # , (0,0)
                 # create windows
 
@@ -931,24 +846,16 @@ def create_multimodal_pytorch_dataset(
         falls = []
         adl = []
         if fair_compairson == True:
-            shared_adl_vids = np.loadtxt(
-                "../Dataset/Metadata/shared_adl_vids.txt"
-            ).astype(int)
-            shared_fall_vids = np.loadtxt(
-                "../Dataset/Metadata/shared_fall_vids.txt"
-            ).astype(int)
+            shared_adl_vids = np.loadtxt("../Dataset/Metadata/shared_adl_vids.txt").astype(int)
+            shared_fall_vids = np.loadtxt("../Dataset/Metadata/shared_fall_vids.txt").astype(int)
             # create list of all fall and nonfall folders
-            for root, dirs, files in os.walk(
-                "{}/Dataset/Fall-Data/{}/Fall".format(dataset_directory, dset)
-            ):
+            for root, dirs, files in os.walk("{}/Dataset/Fall-Data/{}/Fall".format(dataset_directory, dset)):
                 for dir in dirs:
                     x = re.findall("[0-9]+", dir)[0]
                     if int(x) in shared_fall_vids:
                         falls.append(dir)
 
-            for root, dirs, files in os.walk(
-                "{}/Dataset/Fall-Data/{}/NonFall".format(dataset_directory, dset)
-            ):
+            for root, dirs, files in os.walk("{}/Dataset/Fall-Data/{}/NonFall".format(dataset_directory, dset)):
                 for dir in dirs:
                     x = re.findall("[0-9]+", dir)[0]
                     if int(x) in shared_adl_vids:
@@ -956,14 +863,10 @@ def create_multimodal_pytorch_dataset(
 
         elif fair_compairson == False:
             # create list of all fall and nonfall folders
-            for root, dirs, files in os.walk(
-                "{}/Dataset/Fall-Data/{}/Fall".format(dataset_directory, dset)
-            ):
+            for root, dirs, files in os.walk("{}/Dataset/Fall-Data/{}/Fall".format(dataset_directory, dset)):
                 if len(dirs) > 0:
                     falls.extend(dirs)
-            for root, dirs, files in os.walk(
-                "{}/Dataset/Fall-Data/{}/NonFall".format(dataset_directory, dset)
-            ):
+            for root, dirs, files in os.walk("{}/Dataset/Fall-Data/{}/NonFall".format(dataset_directory, dset)):
                 if len(dirs) > 0:
                     adl.extend(dirs)
 
@@ -1030,9 +933,7 @@ def create_multimodal_pytorch_dataset(
     for i in range(len(dsets)):
         path = "{}\H5PY\Data_set-{}-imgdim64x64.h5".format(project_directory, names[i])
         print("loading", names[i])
-        y_data_fall, x_data_fall, x_data_adl, y_data_adl = load_data(
-            names[i], dsets[i], path, fair_compairson
-        )
+        y_data_fall, x_data_fall, x_data_adl, y_data_adl = load_data(names[i], dsets[i], path, fair_compairson)
         y_data_falls.append(y_data_fall)
         x_data_falls.append(x_data_fall)
         y_data_adls.append(y_data_adl)
@@ -1090,11 +991,11 @@ def create_multimodal_pytorch_dataset(
     """
 
     Test_Dataset = Multi_Dataset(y_data_falls, x_data_falls, window=window_len)
-    test_dataloader = data.DataLoader(Test_Dataset, batch_size=1)
+    test_dataloader = data.DataLoader(Test_Dataset, batch_size)
 
     # X_modality_list, y_modality_list = re_arrange_data(x_data_adls, y_data_adls)
 
     Train_Dataset = Multi_Dataset(y_data_adls, x_data_adls, window=window_len)
-    train_dataloader = data.DataLoader(Train_Dataset, batch_size=1)
+    train_dataloader = data.DataLoader(Train_Dataset, batch_size)
 
     return (Test_Dataset, test_dataloader, Train_Dataset, train_dataloader)

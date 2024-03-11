@@ -2,5 +2,8 @@
     "[python]": {
         "editor.defaultFormatter": "ms-python.black-formatter",
         "editor.formatOnSave": true
-      },
+     },
+    "black-formatter.args": ["--line-length", "119"],
+    "notebook.formatOnSave.enabled": true,
+    "notebook.lineNumbers": "on",
 }
