@@ -9,7 +9,7 @@ import sys
 
 # Importing constants from parameters.py
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
-from Code.parameters import project_directory, dataset_directory
+from Code.parameters import project_directory, dataset_directory, ht, wd
 
 sys.path.remove(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 
@@ -319,8 +319,8 @@ for i in range(len(modalities)):
     print(folder_location)
     print(modality)
 
-    img_width = 64
-    img_height = 64
+    img_width = wd
+    img_height = ht
     raw = False
     sort = True
 

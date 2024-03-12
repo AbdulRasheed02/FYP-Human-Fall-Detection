@@ -27,7 +27,7 @@ from sklearn.metrics import (
     precision_recall_curve,
 )
 import pdb
-from parameters import project_directory, dataset_directory, batch_size
+from parameters import project_directory, dataset_directory, batch_size, ht, wd
 
 """
  Function that takes inputs (sample, reconstruction, and label)
@@ -38,8 +38,6 @@ performance metrics
 - AUC ROC and PR for std and mean of window error for different thresholds (both day and night)
 
 """
-
-ht, wd = 64, 64
 
 
 # compute performance metrics for a set of original samples (sample) and reconstructed outputs (output)

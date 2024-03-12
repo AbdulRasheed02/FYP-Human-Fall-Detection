@@ -1,0 +1,25 @@
+Data Preprocessing
+1. RGB to Greyscale
+2. Resizing
+3. Mean Centering
+4. Rescaling
+
+File - Dataset\dataset_creator.py
+Input - Raw dataset
+Output - h5py file containing compressed preprocessed data
+
+Data Augmentation
+1.
+2.
+
+Feature Extraction
+1.
+2.
+
+Deep Learning Model
+a. Single Modal
+    1. Base_3DCAE
+    2.
+b. Multi Modal  
+    1.
+    2.

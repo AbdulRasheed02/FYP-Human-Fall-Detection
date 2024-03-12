@@ -12,6 +12,8 @@ if access_dataset_from_external_hdd:
 else:
     dataset_directory = project_directory
 
+ht, wd = 64, 64  # Preprocessed image dimensions
+
 batch_size = 1  # No.of samples per batch (For train and test dataloader)
 
 window_len = 8
