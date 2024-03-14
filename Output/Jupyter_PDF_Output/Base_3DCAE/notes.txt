@@ -1,0 +1,28 @@
+IP Trials -
+1 : Baseline
+
+Current Optimal - 
+
+ONI_IR Trials -
+1 : Baseline
+
+Current Optimal - 
+
+Thermal Trials -
+1,2 : Baseline
+3 : Fair Comparision = False
+4 to 7 : Default GMG with various loss functions
+8 : Default MOG2 with L1loss()
+9 : Default MOG with L1loss()
+10 : Modified GMG with L1loss()
+11 : Modified MOG2 with L1loss()
+12 : Modified GMG with SmoothL1loss()
+13 : Modified MOG2 with SmoothL1loss()
+14 : Modified GMG with L1loss()
+15 : Modified GMG with L1loss()
+16 : Modified GMG with L1loss()
+17 : Modified GMG with L1loss()
+18 : Modified GMG with L1loss()
+
+Current Optimal Model : 6 - Default GMG with L1loss()
+                        16 - Modified GMG with L1loss()

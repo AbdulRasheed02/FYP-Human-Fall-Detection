@@ -14,6 +14,15 @@ else:
 
 ht, wd = 64, 64  # Preprocessed image dimensions
 
+# Feature Extraction
+feature_extraction = True  # Enable or disable feature extraction techniques
+background_subtraction = True  # Enable or disable background subtraction
+background_subtraction_algorithms = ["GMG", "MOG2", "MOG"]
+background_subtraction_algorithm = background_subtraction_algorithms[0]  # Choose the algorithm to be used
+
+# Data augmentation
+data_augmentation = False  # Enable or disable data augmentation techniques
+
 batch_size = 1  # No.of samples per batch (For train and test dataloader)
 
 window_len = 8
@@ -30,4 +39,4 @@ chunk_size = 64
 forward_chunk = 8
 forward_chunk_size = 8  # This is smaller due to memory constrains
 
-loss_fn = nn.MSELoss()
+loss_fn = nn.L1Loss()

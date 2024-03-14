@@ -11,15 +11,19 @@ Output - h5py file containing compressed preprocessed data
 Data Augmentation
 1.
 2.
+3.
+4.
 
 Feature Extraction
-1.
-2.
+1. Backgroud Subtraction (File - Code\Feature_Extraction\background_subtraction.py)
+2. Optical Flow
+3. 
+4.
 
 Deep Learning Model
-a. Single Modal
+a. Unimodal
     1. Base_3DCAE
     2.
-b. Multi Modal  
+b. Multimodal  
     1.
     2.
