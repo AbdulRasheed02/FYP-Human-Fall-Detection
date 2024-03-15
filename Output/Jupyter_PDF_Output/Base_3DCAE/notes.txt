@@ -1,12 +1,14 @@
 IP Trials -
 1 : Baseline
+2 : Default GMG with L1loss()
 
-Current Optimal - 
+Current Optimal - 2 : Default GMG with L1loss()
 
 ONI_IR Trials -
 1 : Baseline
+2 : Default GMG with L1loss()
 
-Current Optimal - 
+Current Optimal - 2 : Default GMG with L1loss()  
 
 Thermal Trials -
 1,2 : Baseline
@@ -24,5 +26,5 @@ Thermal Trials -
 17 : Modified GMG with L1loss()
 18 : Modified GMG with L1loss()
 
-Current Optimal Model : 6 - Default GMG with L1loss()
-                        16 - Modified GMG with L1loss()
+Current Optimal Model - 6 : Default GMG with L1loss()
+                        16 : Modified GMG with L1loss()
