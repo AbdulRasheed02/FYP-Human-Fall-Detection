@@ -1,12 +1,14 @@
 IP Trials -
 1 : Baseline
 2 : Default GMG with L1loss()
+3 : Default GMG with MSEloss()
 
-Current Optimal - 2 : Default GMG with L1loss()
+Current Optimal - 3 : Default GMG with MSEloss()
 
 ONI_IR Trials -
 1 : Baseline
 2 : Default GMG with L1loss()
+3 : Default GMG with MSEloss()
 
 Current Optimal - 2 : Default GMG with L1loss()  
 
