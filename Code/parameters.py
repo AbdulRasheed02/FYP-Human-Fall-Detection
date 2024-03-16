@@ -14,8 +14,11 @@ else:
 
 ht, wd = 64, 64  # Preprocessed image dimensions
 
+anomaly_detection_model = False  # True for Autoencoder models, False for CNN models
+test_size = 0.2  # Ratio of data to be taken as test data
+
 # Feature Extraction
-feature_extraction = True  # Enable or disable feature extraction techniques
+feature_extraction = False  # Enable or disable feature extraction techniques
 background_subtraction = True  # Enable or disable background subtraction
 background_subtraction_algorithms = ["GMG", "MOG2", "MOG"]
 background_subtraction_algorithm = background_subtraction_algorithms[0]  # Choose the algorithm to be used

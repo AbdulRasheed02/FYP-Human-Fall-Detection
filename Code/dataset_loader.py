@@ -12,8 +12,11 @@ from parameters import (
     batch_size,
     ht,
     wd,
+    anomaly_detection_model,
+    test_size,
 )
 from Feature_Extraction.background_subtractor import perform_background_subtraction
+from sklearn.model_selection import train_test_split
 
 
 # Load the H5PY dataset into a pytorch dataset class.
@@ -174,13 +177,31 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
     # print(len(x_data_fall))
     # print(len(x_data_adl))
 
-    Test_Dataset = Dataset(y_data_fall, x_data_fall, window=window_len)  # Parameters - Labels, Data, Window length
-    test_dataloader = data.DataLoader(Test_Dataset, batch_size)
+    if anomaly_detection_model:
+        Test_Dataset = Dataset(y_data_fall, x_data_fall, window=window_len)  # Parameters - Labels, Data, Window length
+        test_dataloader = data.DataLoader(Test_Dataset, batch_size)
 
-    Train_Dataset = Dataset(y_data_adl, x_data_adl, window=window_len)
-    train_dataloader = data.DataLoader(Train_Dataset, batch_size)
+        Train_Dataset = Dataset(y_data_adl, x_data_adl, window=window_len)
+        train_dataloader = data.DataLoader(Train_Dataset, batch_size)
 
-    return (Test_Dataset, test_dataloader, Train_Dataset, train_dataloader)
+        return (Test_Dataset, test_dataloader, Train_Dataset, train_dataloader)
+    else:
+        # Combine Fall and ADL arrays
+        combined_x_data = x_data_fall + x_data_adl  # Data
+        combined_y_data = y_data_fall + y_data_adl  # Labels
+
+        x_data_train, x_data_test, y_data_train, y_data_test = train_test_split(
+            combined_x_data, combined_y_data, test_size=test_size, random_state=42
+        )  # Parameters - Data, Labels, Split Ratio, Random Seed
+
+        # Create separate datasets and dataloaders for training and testing
+        Test_Dataset = Dataset(y_data_test, x_data_test, window=window_len)
+        test_dataloader = data.DataLoader(Test_Dataset, batch_size)
+
+        Train_Dataset = Dataset(y_data_train, x_data_train, window=window_len)
+        train_dataloader = data.DataLoader(Train_Dataset, batch_size)
+
+        return (Test_Dataset, test_dataloader, Train_Dataset, train_dataloader)
 
 
 def create_multimodal_pytorch_dataset(names, dsets, window_len, fair_compairson, stride):
