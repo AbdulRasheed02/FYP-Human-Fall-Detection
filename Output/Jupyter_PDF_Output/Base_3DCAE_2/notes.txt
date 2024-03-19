@@ -1,0 +1,17 @@
+IP Trials -
+
+Current Optimal - 
+
+ONI_IR Trials -
+
+Current Optimal - 
+
+Thermal Trials -
+1 : Baseline
+2 : L1Loss() 
+3 : Spatial Temporal Loss
+4 : Default GMG, L1loss()
+5 : Spatial Temporal Loss, L1Loss()
+6 : Default GMG, L1loss(), Spatial Temporal Loss
+
+Current Optimal Model - 6 : Default GMG, L1loss(), Spatial Temporal Loss
