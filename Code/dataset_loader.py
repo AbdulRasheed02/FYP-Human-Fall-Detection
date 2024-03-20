@@ -14,6 +14,7 @@ from parameters import (
     wd,
     anomaly_detection_model,
     test_size,
+    metadata_set,
 )
 from Feature_Extraction.background_subtractor import perform_background_subtraction
 from sklearn.model_selection import train_test_split
@@ -24,10 +25,18 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
     falls = []
     adl = []
     if fair_compairson == True:  #  Load specific lists of fall and non-fall video directories based on time of day.
-        shared_adl_vids = np.loadtxt("{}/Dataset/Metadata/shared_adl_vids.txt".format(project_directory)).astype(int)
-        shared_fall_vids = np.loadtxt("{}/Dataset/Metadata/shared_fall_vids.txt".format(project_directory)).astype(int)
-        day_fall_vids = np.loadtxt("{}/Dataset/Metadata/day_fall_vids.txt".format(project_directory)).astype(int)
-        night_fall_vids = np.loadtxt("{}/Dataset/Metadata/night_fall_vids.txt".format(project_directory)).astype(int)
+        shared_adl_vids = np.loadtxt(
+            "{}/Dataset/Metadata/shared_adl_vids_{}.txt".format(project_directory, metadata_set)
+        ).astype(int)
+        shared_fall_vids = np.loadtxt(
+            "{}/Dataset/Metadata/shared_fall_vids_{}.txt".format(project_directory, metadata_set)
+        ).astype(int)
+        day_fall_vids = np.loadtxt(
+            "{}/Dataset/Metadata/day_fall_vids_{}.txt".format(project_directory, metadata_set)
+        ).astype(int)
+        night_fall_vids = np.loadtxt(
+            "{}/Dataset/Metadata/night_fall_vids_{}.txt".format(project_directory, metadata_set)
+        ).astype(int)
         if TOD == "Day":
             tod_list = day_fall_vids
         if TOD == "Night":
@@ -278,12 +287,12 @@ def create_multimodal_pytorch_dataset(names, dsets, window_len, fair_compairson,
         falls = []
         adl = []
         if fair_compairson == True:
-            shared_adl_vids = np.loadtxt("{}/Dataset/Metadata/shared_adl_vids.txt".format(project_directory)).astype(
-                int
-            )
-            shared_fall_vids = np.loadtxt("{}/Dataset/Metadata/shared_fall_vids.txt".format(project_directory)).astype(
-                int
-            )
+            shared_adl_vids = np.loadtxt(
+                "{}/Dataset/Metadata/shared_adl_vids_{}.txt".format(project_directory, metadata_set)
+            ).astype(int)
+            shared_fall_vids = np.loadtxt(
+                "{}/Dataset/Metadata/shared_fall_vids_{}.txt".format(project_directory, metadata_set)
+            ).astype(int)
             # create list of all fall and nonfall folders
             for root, dirs, files in os.walk("{}/Dataset/Fall-Data/{}/Fall".format(dataset_directory, dset)):
                 for dir in dirs:
