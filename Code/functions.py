@@ -50,7 +50,7 @@ def get_performance_metrics(sample, output, labels, window_len):
     return (frame_std, frame_mean, frame_labels, window_std, window_mean, window_labels)
 
 
-def get_multimodal_preformance_metrics(sample, output, labels, window_len):
+def get_multimodal_performance_metrics(sample, output, labels, window_len):
     recon_data = output.reshape(output.shape[0], output.shape[1], window_len, ht * wd)
     sample_data = sample.reshape(sample.shape[0], sample.shape[1], window_len, ht * wd)
     labels = shape_labels(labels)
