@@ -213,77 +213,9 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
         return (Test_Dataset, test_dataloader, Train_Dataset, train_dataloader)
 
 
-def create_multimodal_pytorch_dataset(names, dsets, window_len, fair_compairson, stride):
-
-    class Multi_Dataset(data.Dataset):
-        "Characterizes a dataset for PyTorch"
-
-        def __init__(self, labels, datas, window):
-            "Initialization"
-            self.labels = labels
-            self.datas = datas
-            self.window = window
-
-        def __len__(self):
-            "Denotes the total number of modalities"
-            print(len(self.datas[0]))
-            return len(self.datas[0])
-
-        def __getitem__(self, index):
-            "Generates one sample of data"
-
-            x_data = self.datas
-            y_data = self.labels
-
-            vid = index
-            X_modality_list = []
-            y_modality_list = []
-            # loop through each frame of the video (stopping window length short)
-            for j in range(len(x_data)):
-                X_list = []
-                Y_list = []
-                # have to make arrays same size
-                max_length = 0
-                for k in range(len(x_data)):
-                    if len(x_data[k][vid]) > max_length:
-                        max_length = len(x_data[k][vid])
-                for k in range(len(x_data)):
-                    while len(x_data[k][vid]) < max_length:
-                        x_data[k][vid] = np.pad(x_data[k][vid], [(0, 1), (0, 0), (0, 0), (0, 0)], "mean")  # , (0,0)
-                        y_data[k][vid] = np.append(y_data[k][vid], 0)  # , (0,0)
-                # create windows
-
-                for i in range(0, len(y_data[j][vid]) - window_len):
-                    # select the current window of the video
-                    X = x_data[j][vid][i : i + window_len][:]
-                    y = y_data[j][vid][i : i + window_len]
-                    # add the current window the list of windows
-                    X_list.append(X)
-                    Y_list.append(y)
-                # save videos into list
-                X_modality_list.append(np.asarray(X_list))
-                y_modality_list.append(np.asarray(Y_list))
-            X = np.squeeze(np.stack(X_modality_list))
-            y = np.squeeze(np.stack(y_modality_list))
-            return (X, y)
-            """
-            mod_vid = [] 
-            mod_labels = []
-            for j in range(len(self.datas)):
-                video = self.datas[j][index]
-                label = self.labels[j][index]
-                mod_vid.append(np.squeeze(video))
-                mod_labels.append(np.squeeze(label))
-            X = np.squeeze(np.stack(mod_vid))
-            y = np.squeeze(np.stack(mod_labels))
-            """
-            # X should be (modalities, window-length, 64, 64, # of windows w/in video) array
-            # ex. (3, 8, 64, 64, 192) for a 200 frame video and window size of 8 and 3 modalities
-            # y is array (8, # of windows w/in video)
-            return X, y
+def create_multimodal_pytorch_dataset(names, dsets, paths, window_len, fair_compairson, stride):
 
     def load_data(name, dset, path, fair_compairson):
-        print(name, dset, path)
         falls = []
         adl = []
         if fair_compairson == True:
@@ -315,9 +247,9 @@ def create_multimodal_pytorch_dataset(names, dsets, window_len, fair_compairson,
                 if len(dirs) > 0:
                     adl.extend(dirs)
 
-        x_data_fall = []
-        y_data_fall = []
-        x_info_fall = []
+        x_data_fall = []  # Video data
+        y_data_fall = []  # Label
+        x_info_fall = []  # Directory name/number
 
         x_data_adl = []
         y_data_adl = []
@@ -342,6 +274,10 @@ def create_multimodal_pytorch_dataset(names, dsets, window_len, fair_compairson,
                 except:
                     print("Skipped", Fall_name)
 
+                # Exit after 5 fall directories (For dev and debugging)
+                # if len(x_data_fall) == 5:
+                #     break
+
             for adl_name in adl:
                 try:
                     vid_total = data_dict[adl_name]["Data"][:]
@@ -354,6 +290,10 @@ def create_multimodal_pytorch_dataset(names, dsets, window_len, fair_compairson,
                     y_data_adl.append(labels_total)
                 except:
                     print("Skipped", adl_name)
+
+                # Exit after 5 fall directories (For dev and debugging)
+                # if len(x_data_adl) == 5:
+                #     break
 
         """ 
         # get matching day/night label from falls
@@ -376,18 +316,17 @@ def create_multimodal_pytorch_dataset(names, dsets, window_len, fair_compairson,
     x_data_falls = []
     y_data_adls = []
     x_data_adls = []
+
     for i in range(len(dsets)):
-        path = "{}\H5PY\Data_set-{}-imgdim64x64.h5".format(project_directory, names[i])
-        print("loading", names[i])
+        path = paths[i]
+        print("Modality {} - {}".format(i + 1, dsets[i]))
         y_data_fall, x_data_fall, x_data_adl, y_data_adl = load_data(names[i], dsets[i], path, fair_compairson)
+        # print(len(y_data_fall), len(x_data_fall), len(y_data_adl), len(x_data_adl))
+        print("Non Falls - {}, Falls - {}\n".format(len(x_data_adl), len(x_data_fall)))
         y_data_falls.append(y_data_fall)
         x_data_falls.append(x_data_fall)
         y_data_adls.append(y_data_adl)
         x_data_adls.append(x_data_adl)
-        print(len(y_data_fall))
-        print(len(x_data_fall))
-        print(len(y_data_adl))
-        print(len(x_data_adl))
         del y_data_fall
         del x_data_fall
         del y_data_adl
@@ -436,10 +375,81 @@ def create_multimodal_pytorch_dataset(names, dsets, window_len, fair_compairson,
     X_modality_list, y_modality_list = re_arrange_data(x_data_falls, y_data_falls)
     """
 
-    Test_Dataset = Multi_Dataset(y_data_falls, x_data_falls, window=window_len)
-    test_dataloader = data.DataLoader(Test_Dataset, batch_size)
+    class Multi_Dataset(data.Dataset):
+        "Characterizes a dataset for PyTorch"
+
+        def __init__(self, labels, datas, window):
+            "Initialization"
+            self.labels = labels
+            self.datas = datas
+            self.window = window
+
+        def __len__(self):
+            "Denotes the total number of modalities"
+            return len(self.datas[0])
+
+        def __getitem__(self, index):
+            "Generates one sample of data"
+
+            x_data = self.datas
+            y_data = self.labels
+
+            vid = index
+            X_modality_list = []
+            y_modality_list = []
+
+            for j in range(len(x_data)):
+                X_list = []
+                Y_list = []
+                # have to make arrays same size
+                max_length = 0
+                for k in range(len(x_data)):
+                    if len(x_data[k][vid]) > max_length:
+                        max_length = len(x_data[k][vid])
+                for k in range(len(x_data)):
+                    while len(x_data[k][vid]) < max_length:
+                        x_data[k][vid] = np.pad(x_data[k][vid], [(0, 1), (0, 0), (0, 0), (0, 0)], "mean")  # , (0,0)
+                        y_data[k][vid] = np.append(y_data[k][vid], 0)  # , (0,0)
+                # create windows
+                # loop through each frame of the video (stopping window length short)
+                for i in range(0, len(y_data[j][vid]) - window_len):
+                    # select the current window of the video
+                    X = x_data[j][vid][i : i + window_len][:]
+                    y = y_data[j][vid][i : i + window_len]
+                    # add the current window the list of windows
+                    X_list.append(X)
+                    Y_list.append(y)
+                # save videos into list
+                X_modality_list.append(np.asarray(X_list))
+                y_modality_list.append(np.asarray(Y_list))
+
+            X = np.squeeze(np.stack(X_modality_list))
+            y = np.squeeze(np.stack(y_modality_list))
+            # X should be (modalities, # of windows w/in video, window-length, 64, 64) array
+            # ex - (2, 819, 8, 64, 64)
+            # y should be (modalities, # of windows w/in video, window-length) array
+            # ex - (2, 819, 8)
+            return (X, y)
+            """
+            mod_vid = [] 
+            mod_labels = []
+            for j in range(len(self.datas)):
+                video = self.datas[j][index]
+                label = self.labels[j][index]
+                mod_vid.append(np.squeeze(video))
+                mod_labels.append(np.squeeze(label))
+            X = np.squeeze(np.stack(mod_vid))
+            y = np.squeeze(np.stack(mod_labels))
+            """
+            # X should be (modalities, window-length, 64, 64, # of windows w/in video) array
+            # ex. (3, 8, 64, 64, 192) for a 200 frame video and window size of 8 and 3 modalities
+            # y is array (8, # of windows w/in video)
+            return X, y
 
     # X_modality_list, y_modality_list = re_arrange_data(x_data_adls, y_data_adls)
+
+    Test_Dataset = Multi_Dataset(y_data_falls, x_data_falls, window=window_len)
+    test_dataloader = data.DataLoader(Test_Dataset, batch_size)
 
     Train_Dataset = Multi_Dataset(y_data_adls, x_data_adls, window=window_len)
     train_dataloader = data.DataLoader(Train_Dataset, batch_size)
