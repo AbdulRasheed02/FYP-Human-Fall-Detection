@@ -245,4 +245,4 @@ dependencies:
       - opencv-contrib-python==4.9.0.80
       - torchaudio==2.1.2
       - torchvision==0.16.2
-prefix: C:\Users\abdul\anaconda3\envs\fyp_base_paper_2
+prefix: C:\Users\sindh\anaconda3\envs\fyp_base_paper_2

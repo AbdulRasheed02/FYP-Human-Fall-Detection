@@ -1,6 +1,9 @@
 import torch
 import torch.nn as nn
 import os
+from Models.Base_3DCAE import Base_3DCAE
+from Models.Base_3DCAE_2 import Base_3DCAE_2
+from Models.CNN_3D import CNN_3D
 
 script_directory = os.path.dirname(__file__)
 project_directory = os.path.dirname(script_directory)  # Base Folder - FallDetection
@@ -14,12 +17,12 @@ else:
 
 ht, wd = 64, 64  # Preprocessed image dimensions
 
-anomaly_detection_model = True  # True for Autoencoder models, False for CNN models
+anomaly_detection_model = False  # True for Autoencoder models, False for CNN models
 test_size = 0.2  # Ratio of data to be taken as test data (If anomaly_detection_model is false)
 
 # Feature Extraction
 feature_extraction = False  # Enable or disable feature extraction techniques
-background_subtraction = True  # Enable or disable background subtraction
+background_subtraction = False  # Enable or disable background subtraction
 background_subtraction_algorithms = ["GMG", "MOG2", "MOG"]
 background_subtraction_algorithm = background_subtraction_algorithms[0]  # Choose the algorithm to be used
 
@@ -35,6 +38,9 @@ TOD = "Both"  # Time of Day
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
+models = [Base_3DCAE, Base_3DCAE_2, CNN_3D]
+model = models[2]  # Choose model to be used
+
 dropout = 0.25
 learning_rate = 0.0002
 num_epochs = 20
@@ -42,7 +48,9 @@ chunk_size = 64
 forward_chunk = 8
 forward_chunk_size = 8  # This is smaller due to memory constraints
 
-loss_fn = nn.L1Loss()
+loss_fns = [nn.MSELoss(), nn.L1Loss(), nn.BCELoss()]
+loss_fn = loss_fns[1]  # Choose loss function based on model used
+
 spatial_temporal_loss = False  # Enable or disable spatial temporal loss function
 # Weights used when calculating loss using spatial temporal loss function
 w1 = 1

@@ -262,6 +262,48 @@ def get_total_performance_metrics(name, frame_stats, window_stats, window_len):
     return (final_performance_mean, final_performance_std)
 
 
+def get_cnn_performance_metrics(total_stats):
+    tp = fn = fp = tn = 0
+
+    for i in range(len(total_stats)):
+        output, labels = total_stats[i]
+        labels = labels[0]
+        for j in range(len(output)):
+            if j < len(labels):
+                for k in range(len(output[j])):
+                    if k < len(labels[j]):
+                        if output[j][k] > 0.5 and labels[j][k] == 1:
+                            tp += 1
+                        elif output[j][k] > 0.5 and labels[j][k] == 0:
+                            fp += 1
+                        elif output[j][k] <= 0.5 and labels[j][k] == 1:
+                            fn += 1
+                        else:
+                            tn += 1
+
+    if tp + fn == 0:
+        tpr = 0
+    else:
+        tpr = tp / (tp + fn)
+    if fp + tn == 0:
+        fpr = 0
+    else:
+        fpr = fp / (fp + tn)
+    if tp + fp == 0:
+        precision = 0
+    else:
+        precision = tp / (tp + fp)
+    recall = tpr
+
+    print(
+        "----------------------------------\n",
+        "CNN Performance Results\n",
+        "TPR {}, FPR {}, Precision {}, Recall {}\n".format(tpr, fpr, precision, recall),
+        "tn {}, fp {}, fn {}, tp {}\n".format(tn, fp, fn, tp),
+        "----------------------------------",
+    )
+
+
 def late_fusion_performance_metrics(output, labels):
     roc_fpr, roc_tpr, roc_thresholds = roc_curve(y_true=labels[: len(output)], y_score=output, pos_label=1)
     mean_AUROC = auc(roc_fpr, roc_tpr)

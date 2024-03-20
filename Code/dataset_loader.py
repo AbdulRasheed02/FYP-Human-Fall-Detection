@@ -98,8 +98,8 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
                 print("Skipped", Fall_name)
 
             # Exit after 5 fall directories (For dev and debugging)
-            # if len(x_data_fall) == 5:
-            #     break
+            if len(x_data_fall) == 5:
+                break
 
         for adl_name in adl:
             try:
@@ -124,8 +124,8 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
                 print("Skipped", adl_name)
 
             # Exit after 5 adl directories (For dev and debugging)
-            # if len(x_data_adl) == 5:
-            #     break
+            if len(x_data_adl) == 5:
+                break
 
     # pdb.set_trace()
     # %%    temp_df = my_data.loc[my_data["Video"] == int(fall), "ToD"]
