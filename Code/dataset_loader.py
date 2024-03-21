@@ -148,7 +148,6 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
                     x_data_adl.append(vid_total)
 
                 x_info_adl.append(adl_name)  # [7:]
-                labels_total = data_dict[adl_name]["Labels"][:]
                 y_data_adl.append(labels_total)
                 # print("{} - {}, {} ".format(adl_name, len(vid_total), len(labels_total)))
             except:
