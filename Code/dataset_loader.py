@@ -17,8 +17,10 @@ from parameters import (
     test_size,
     metadata_set,
     pad_video,
+    key_frame_threshold,
 )
 from Feature_Extraction.background_subtractor import perform_background_subtraction
+from Frame_Utility.frame_utility import fall_frame_extractor, key_frame_extractor
 from sklearn.model_selection import train_test_split
 
 
@@ -80,6 +82,11 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
     y_data_adl = []
     x_info_adl = []
 
+    # For CNN class imbalance problem
+    # Fall frames exists only in fall folder, Non fall frames can be in both fall and non fall folder
+    # Non fall frames is not extracted from fall folder as it is from younger adults.
+    total_fall_frames = total_non_fall_frames_from_adl = 0
+
     # path = "processed_data\data_set-{}-imgdim64x64.h5".format(name)
 
     # Loop through fall and non-fall directories, loading video data and labels into respective lists.
@@ -89,9 +96,15 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
         for Fall_name in falls:
             try:
                 vid_total = data_dict[Fall_name]["Data"][:]
-                # print("{} - {} ".format(Fall_name, len(vid_total)))
+                labels_total = data_dict[Fall_name]["Labels"][:]
+                # print("{} - {}, {} ".format(Fall_name, len(vid_total), len(labels_total)))
                 if len(vid_total) < 10:
                     continue
+
+                # # For CNNs
+                if not anomaly_detection_model:
+                    vid_total, labels_total = fall_frame_extractor(vid_total, labels_total)
+                    total_fall_frames = total_fall_frames + len(labels_total)
 
                 if feature_extraction:
                     feature_extracted_vid_total = []
@@ -103,21 +116,27 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
                     x_data_fall.append(vid_total)
 
                 x_info_fall.append(Fall_name)  # [7:]
-                labels_total = data_dict[Fall_name]["Labels"][:]
                 y_data_fall.append(labels_total)
+                # print("{} - {}, {} ".format(Fall_name, len(vid_total), len(labels_total)))
             except:
                 print("Skipped", Fall_name)
 
             # Exit after 5 fall directories (For dev and debugging)
-            if len(x_data_fall) == 5:
-                break
+            # if len(x_data_fall) == 5:
+            #     break
 
         for adl_name in adl:
             try:
                 vid_total = data_dict[adl_name]["Data"][:]
-                # print("{} - {} ".format(adl_name, len(vid_total)))
+                labels_total = data_dict[adl_name]["Labels"][:]
+                # print("{} - {}, {} ".format(adl_name, len(vid_total), len(labels_total)))
                 if len(vid_total) < 10:
                     continue
+
+                # For CNNs
+                if not anomaly_detection_model:
+                    vid_total, labels_total = key_frame_extractor(vid_total, labels_total, key_frame_threshold)
+                    total_non_fall_frames_from_adl = total_non_fall_frames_from_adl + len(labels_total)
 
                 if feature_extraction:
                     feature_extracted_vid_total = []
@@ -131,12 +150,13 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
                 x_info_adl.append(adl_name)  # [7:]
                 labels_total = data_dict[adl_name]["Labels"][:]
                 y_data_adl.append(labels_total)
+                # print("{} - {}, {} ".format(adl_name, len(vid_total), len(labels_total)))
             except:
                 print("Skipped", adl_name)
 
             # Exit after 5 adl directories (For dev and debugging)
-            if len(x_data_adl) == 5:
-                break
+            # if len(x_data_adl) == 5:
+            #     break
 
     # pdb.set_trace()
     # %%    temp_df = my_data.loc[my_data["Video"] == int(fall), "ToD"]
@@ -187,6 +207,7 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
 
     # print(len(x_data_fall))
     # print(len(x_data_adl))
+    # print(total_fall_frames, total_non_fall_frames_from_adl)
 
     if anomaly_detection_model:
         Test_Dataset = Dataset(y_data_fall, x_data_fall, window=window_len)  # Parameters - Labels, Data, Window length

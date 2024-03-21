@@ -20,6 +20,7 @@ ht, wd = 64, 64  # Preprocessed image dimensions
 
 anomaly_detection_model = False  # True for Autoencoder models, False for CNN models
 test_size = 0.2  # Ratio of data to be taken as test data (If anomaly_detection_model is false)
+key_frame_threshold = 0.001  # Percentage of non-zero pixels required to classify as key_frame
 
 # Feature Extraction
 feature_extraction = False  # Enable or disable feature extraction techniques
@@ -47,13 +48,13 @@ dropout = 0.25
 learning_rate = 0.0002
 num_epochs = 20
 chunk_size = 64
-forward_chunk = 8
 forward_chunk_size = 8  # This is smaller due to memory constraints
 
 loss_fns = [
+    nn.BCELoss(),
+    nn.CrossEntropyLoss(),
     nn.MSELoss(),
     nn.L1Loss(),
-    nn.BCELoss(),
     nn.HuberLoss(),
     nn.SmoothL1Loss(),
 ]

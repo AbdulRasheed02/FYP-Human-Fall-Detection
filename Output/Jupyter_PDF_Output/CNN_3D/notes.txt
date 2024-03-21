@@ -1,0 +1,13 @@
+IP Trials -
+
+Current Optimal - 
+
+ONI_IR Trials -
+
+Current Optimal - 
+
+Thermal Trials -
+1 : Baseline with BCEloss(), Threshold - 0.61
+2 : Baseline with BCEloss(), Threshold - 0.61
+
+Current Optimal Model - 1 : Baseline with BCEloss(), Threshold - 0.61

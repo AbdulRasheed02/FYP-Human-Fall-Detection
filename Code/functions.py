@@ -264,19 +264,21 @@ def get_total_performance_metrics(name, frame_stats, window_stats, window_len):
 
 def get_cnn_performance_metrics(total_stats):
     tp = fn = fp = tn = 0
+    threshold = 0.61
 
     for i in range(len(total_stats)):
         output, labels = total_stats[i]
+        output = output[0]
         labels = labels[0]
         for j in range(len(output)):
             if j < len(labels):
                 for k in range(len(output[j])):
                     if k < len(labels[j]):
-                        if output[j][k] > 0.5 and labels[j][k] == 1:
+                        if output[j][k] > threshold and labels[j][k] == 1:
                             tp += 1
-                        elif output[j][k] > 0.5 and labels[j][k] == 0:
+                        elif output[j][k] > threshold and labels[j][k] == 0:
                             fp += 1
-                        elif output[j][k] <= 0.5 and labels[j][k] == 1:
+                        elif output[j][k] <= threshold and labels[j][k] == 1:
                             fn += 1
                         else:
                             tn += 1
