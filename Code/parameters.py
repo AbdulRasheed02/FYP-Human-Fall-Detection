@@ -49,7 +49,13 @@ chunk_size = 64
 forward_chunk = 8
 forward_chunk_size = 8  # This is smaller due to memory constraints
 
-loss_fns = [nn.MSELoss(), nn.L1Loss(), nn.BCELoss()]
+loss_fns = [
+    nn.MSELoss(),
+    nn.L1Loss(),
+    nn.BCELoss(),
+    nn.HuberLoss(),
+    nn.SmoothL1Loss(),
+]
 loss_fn = loss_fns[1]  # Choose loss function based on model used
 
 spatial_temporal_loss = False  # Enable or disable spatial temporal loss function
