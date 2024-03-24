@@ -21,7 +21,8 @@ background_subtraction_algorithms = ["GMG", "MOG2", "MOG"]
 background_subtraction_algorithm = background_subtraction_algorithms[0]  # Choose the algorithm to be used
 
 # Data augmentation
-data_augmentation = False  # Enable or disable data augmentation techniques
+data_augmentation = True  # Enable or disable data augmentation techniques
+folders_to_be_augmented = ['2', '3', '4', '5', '10', '13', '23', '28', '29',  '31', '34', '40', '41', '44', '45', '58', '62', '63', '66', '67', '73', '75', '83', '88']
 
 batch_size = 1  # No.of samples per batch (For train and test dataloader)
 

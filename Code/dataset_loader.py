@@ -3,18 +3,21 @@ import os
 import numpy as np
 from torch.utils import data
 import re
+import random 
 from io import StringIO
 from parameters import (
     project_directory,
     dataset_directory,
     feature_extraction,
+    data_augmentation,
     background_subtraction,
     batch_size,
     ht,
     wd,
+    folders_to_be_augmented
 )
 from Feature_Extraction.background_subtractor import perform_background_subtraction
-
+from Data_Augmentation.augmenter import augment_images
 
 # Load the H5PY dataset into a pytorch dataset class.
 def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride, TOD="Both"):
@@ -98,13 +101,15 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
             # if len(x_data_fall) == 5:
             #     break
 
+                
         for adl_name in adl:
             try:
                 vid_total = data_dict[adl_name]["Data"][:]
+                # print("sup")
+                # print(adl_name)
                 # print("{} - {} ".format(adl_name, len(vid_total)))
                 if len(vid_total) < 10:
                     continue
-
                 if feature_extraction:
                     feature_extracted_vid_total = []
                     if background_subtraction:
@@ -123,7 +128,68 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
             # Exit after 5 adl directories (For dev and debugging)
             # if len(x_data_adl) == 5:
             #     break
+                
+        if data_augmentation:
+            for adl_name in folders_to_be_augmented:
+                adl_name = "NonFall" + adl_name
+                try:
+                    vid_total = data_dict[adl_name]["Data"][:]
+                    vid_total = augment_images(vid_total)
+                    # print("sup")
+                    # print(adl_name)
+                    # print("{} - {} ".format(adl_name, len(vid_total)))
+                    if len(vid_total) < 10:
+                        continue
+                    if feature_extraction:
+                        feature_extracted_vid_total = []
+                        if background_subtraction:
+                            feature_extracted_vid_total = perform_background_subtraction(vid_total)
+                        # print("{} - {}".format(adl_name, len(feature_extracted_vid_total)))
+                        x_data_adl.append(feature_extracted_vid_total)
+                    else:
+                        x_data_adl.append(vid_total)
+                    x_info_adl.append(adl_name)  # [7:]
+                    labels_total = data_dict[adl_name]["Labels"][:]
+                    y_data_adl.append(labels_total)
+                except:
+                    print("Skipped", adl_name)
+                # Exit after 5 adl directories (For dev and debugging)
+                # if len(x_data_adl) == 5:
+                #     break
+                        
+        # if data_augmentation:
+        #     for adl_name in adl:
+        #         num=random.random()
+        #         if num > probability:
+        #             try:
+        #                 vid_total = data_dict[adl_name]["Data"][:]
+        #                 vid_total = augment_images(vid_total)
+        #                 # print("sup")
+        #                 # print(adl_name)
+        #                 # print("{} - {} ".format(adl_name, len(vid_total)))
+        #                 if len(vid_total) < 10:
+        #                     continue
+        #                 if feature_extraction:
+        #                     feature_extracted_vid_total = []
+        #                     if background_subtraction:
+        #                         feature_extracted_vid_total = perform_background_subtraction(vid_total)
+        #                     # print("{} - {}".format(adl_name, len(feature_extracted_vid_total)))
+        #                     x_data_adl.append(feature_extracted_vid_total)
+        #                 else:
+        #                     x_data_adl.append(vid_total)
 
+        #                 x_info_adl.append(adl_name)  # [7:]
+        #                 labels_total = data_dict[adl_name]["Labels"][:]
+        #                 y_data_adl.append(labels_total)
+        #             except:
+        #                 print("Skipped", adl_name)
+
+        #             # Exit after 5 adl directories (For dev and debugging)
+        #             # if len(x_data_adl) == 5:
+        #             #     break
+                
+        
+        
     # pdb.set_trace()
     # %%    temp_df = my_data.loc[my_data["Video"] == int(fall), "ToD"]
 
