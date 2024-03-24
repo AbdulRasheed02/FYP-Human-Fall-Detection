@@ -264,7 +264,7 @@ def get_total_performance_metrics(name, frame_stats, window_stats, window_len):
 
 def get_cnn_performance_metrics(total_stats):
     tp = fn = fp = tn = 0
-    threshold = 0.61
+    threshold = 0.65
 
     for i in range(len(total_stats)):
         output, labels = total_stats[i]

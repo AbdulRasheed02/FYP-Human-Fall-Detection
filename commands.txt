@@ -9,3 +9,4 @@ jupyter nbconvert --no-input --output-dir='Output/Jupyter_PDF_Output/Base_3DCAE'
 jupyter nbconvert --no-input --output-dir='Output/Jupyter_PDF_Output/Base_3DCAE_2' --to html Code\single_modality.ipynb
 jupyter nbconvert --no-input --output-dir='Output/Jupyter_PDF_Output/CNN_3D' --to html Code\single_modality.ipynb
 jupyter nbconvert --no-input --output-dir='Output/Jupyter_PDF_Output/MultiModal_3DCAE' --to html Code\multi_modality.ipynb
+jupyter nbconvert --no-input --output-dir='Code/Models' --to html Code\Models\architecture_summary.ipynb

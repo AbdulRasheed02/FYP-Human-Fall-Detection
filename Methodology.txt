@@ -14,6 +14,8 @@ Data Augmentation
 3.
 4.
 
+File - 
+
 Feature Extraction
 1. Backgroud Subtraction (File - Code\Feature_Extraction\background_subtraction.py)
 2. Optical Flow
@@ -23,7 +25,8 @@ Feature Extraction
 Deep Learning Model
 a. Unimodal
     1. Base_3DCAE
-    2.
+    2. Base_3DCAE_2
+    3. CNN_3D
 b. Multimodal  
-    1.
+    1. MultiModal_3DCAE
     2.
