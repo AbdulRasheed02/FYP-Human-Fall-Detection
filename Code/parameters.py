@@ -26,7 +26,8 @@ background_subtraction_algorithm = background_subtraction_algorithms[0]  # Choos
 feature_extraction = background_subtraction  # Perform logical OR with future feature extraction methods' flags
 
 # Data augmentation
-data_augmentation = False  # Enable or disable data augmentation techniques
+data_augmentation = True  # Enable or disable data augmentation techniques
+folders_to_be_augmented = ['2', '3', '4', '5', '10', '13', '23', '28', '29',  '31', '34', '40', '41', '44', '45', '58', '62', '63', '66', '67', '73', '75', '83', '88']
 
 batch_size = 1  # No.of video folder(s) per batch (For train and test dataloader)
 
@@ -38,12 +39,12 @@ TOD = "Both"  # Time of Day
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-anomaly_detection_model = False  # True for Autoencoder models, False for CNN models
+anomaly_detection_model = True  # True for Autoencoder models, False for CNN models
 test_size = 0.2  # Ratio of data to be taken as test data (If anomaly_detection_model is false)
 key_frame_threshold = 0.001  # Percentage of non-zero pixels required to classify as key_frame
 
 models = [Base_3DCAE, Base_3DCAE_2, CNN_3D]
-model = models[2]  # Choose model to be used
+model = models[0]  # Choose model to be used
 
 dropout = 0.25
 learning_rate = 0.0002
@@ -59,7 +60,7 @@ loss_fns = [
     nn.HuberLoss(),
     nn.SmoothL1Loss(),
 ]
-loss_fn = loss_fns[0]  # Choose loss function based on model used
+loss_fn = loss_fns[2]  # Choose loss function based on model used
 
 spatial_temporal_loss = False  # Enable or disable spatial temporal loss function
 # Weights used when calculating loss using spatial temporal loss function

@@ -18,10 +18,13 @@ from parameters import (
     metadata_set,
     pad_video,
     key_frame_threshold,
+    data_augmentation,
+    folders_to_be_augmented
 )
 from Feature_Extraction.background_subtractor import perform_background_subtraction
 from Frame_Utility.frame_utility import fall_frame_extractor, key_frame_extractor
 from sklearn.model_selection import train_test_split
+from Data_Augmentation.augmenter import augment_images
 
 
 # Load the H5PY dataset into a pytorch dataset class.
@@ -144,24 +147,51 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
                     total_non_fall_frames_from_adl = total_non_fall_frames_from_adl + len(labels_total)
 
                 if feature_extraction:
+                    feature_extracted_vid_total = []
                     if background_subtraction:
-                        if anomaly_detection_model:
-                            vid_total = perform_background_subtraction(vid_total)
-                        else:
-                            # Background subtraction is already done in key frame extraction for CNN models
-                            vid_total = background_subtracted_key_frames
-                    # print("{} - {}".format(adl_name, len(vid_total)))
+                        feature_extracted_vid_total = perform_background_subtraction(vid_total)
+                    # print("{} - {}".format(adl_name, len(feature_extracted_vid_total)))
+                    x_data_adl.append(feature_extracted_vid_total)
+                else:
+                    x_data_adl.append(vid_total)
 
-                x_data_adl.append(vid_total)
                 x_info_adl.append(adl_name)  # [7:]
+                labels_total = data_dict[adl_name]["Labels"][:]
                 y_data_adl.append(labels_total)
-                # print("{} - {}, {} ".format(adl_name, len(vid_total), len(labels_total)))
             except:
                 print("Skipped", adl_name)
 
             # Exit after 5 adl directories (For dev and debugging)
             # if len(x_data_adl) == 5:
             #     break
+                
+        if data_augmentation:
+            for adl_name in folders_to_be_augmented:
+                adl_name = "NonFall" + adl_name
+                try:
+                    vid_total = data_dict[adl_name]["Data"][:]
+                    vid_total = augment_images(vid_total)
+                    # print("sup")
+                    # print(adl_name)
+                    # print("{} - {} ".format(adl_name, len(vid_total)))
+                    if len(vid_total) < 10:
+                        continue
+                    if feature_extraction:
+                        feature_extracted_vid_total = []
+                        if background_subtraction:
+                            feature_extracted_vid_total = perform_background_subtraction(vid_total)
+                        # print("{} - {}".format(adl_name, len(feature_extracted_vid_total)))
+                        x_data_adl.append(feature_extracted_vid_total)
+                    else:
+                        x_data_adl.append(vid_total)
+                    x_info_adl.append(adl_name)  # [7:]
+                    labels_total = data_dict[adl_name]["Labels"][:]
+                    y_data_adl.append(labels_total)
+                except:
+                    print("Skipped", adl_name)
+                # Exit after 5 adl directories (For dev and debugging)
+                # if len(x_data_adl) == 5:
+                #     break
 
     # pdb.set_trace()
     # %%    temp_df = my_data.loc[my_data["Video"] == int(fall), "ToD"]
