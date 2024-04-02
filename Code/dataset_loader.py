@@ -425,52 +425,48 @@ def create_multimodal_pytorch_dataset(names, dsets, paths, window_len, fair_comp
             X_modality_list = []  # Data (all modality)
             y_modality_list = []  # Labels (all modality)
 
+            # Find the maximum length of frames across all modalities for this video
+            max_length = 0
+            min_length = sys.maxsize
             # For each modality
-            for j in range(len(x_data)):
+            for k in range(len(x_data)):
+                if len(x_data[k][vid]) > max_length:
+                    max_length = len(x_data[k][vid])
+                if len(x_data[k][vid]) < min_length:
+                    min_length = len(x_data[k][vid])
+
+            # print(len(x_data[0][vid]), len(x_data[1][vid]))
+
+            if pad_video:
+                # For each modality, The video will be padded to match the modality with the maximum length video
+                for k in range(len(x_data)):
+                    while len(x_data[k][vid]) < max_length:
+                        # Pads the video with the mean value of its existing elements until max_length is reached
+                        x_data[k][vid] = np.pad(x_data[k][vid], [(0, 1), (0, 0), (0, 0), (0, 0)], "mean")  # , (0,0)
+                        y_data[k][vid] = np.append(y_data[k][vid], 0)  # , (0,0)
+            else:
+                # For each modality, The video will be trimmed to match the modality with the minimum length video
+                for k in range(len(x_data)):
+                    if len(x_data[k][vid]) > min_length:
+                        x_data[k][vid] = x_data[k][vid][:min_length]
+                        y_data[k][vid] = y_data[k][vid][:min_length]
+
+            # print(len(x_data[0][vid]), len(x_data[1][vid]))
+
+            # For each modality
+            for k in range(len(x_data)):
                 X_list = []  # Windowed Data for this video
                 Y_list = []  # Windowed Labels for this video
-
-                # Find the maximum length of frames across all modalities for this video
-                max_length = 0
-                min_length = sys.maxsize
-                # For each modality
-                for k in range(len(x_data)):
-                    if len(x_data[k][vid]) > max_length:
-                        max_length = len(x_data[k][vid])
-                    if len(x_data[k][vid]) < min_length:
-                        min_length = len(x_data[k][vid])
-
-                # print(len(x_data[0][vid]), len(x_data[1][vid]))
-
-                if pad_video:
-                    # For each modality, The video will be padded to match the modality with the maximum length video
-                    # For each modality
-                    for k in range(len(x_data)):
-                        while len(x_data[k][vid]) < max_length:
-                            # Pads the video with the mean value of its existing elements until max_length is reached
-                            x_data[k][vid] = np.pad(
-                                x_data[k][vid], [(0, 1), (0, 0), (0, 0), (0, 0)], "mean"
-                            )  # , (0,0)
-                            y_data[k][vid] = np.append(y_data[k][vid], 0)  # , (0,0)
-                else:
-                    # For each modality, The video will be trimmed to match the modality with the minimum length video
-                    for k in range(len(x_data)):
-                        if len(x_data[k][vid]) > min_length:
-                            x_data[k][vid] = x_data[k][vid][:min_length]
-                            y_data[k][vid] = y_data[k][vid][:min_length]
-
-                # print(len(x_data[0][vid]), len(x_data[1][vid]))
-
                 # create windows
                 # loop through each frame of the video (stopping window length short)
-                for i in range(0, len(y_data[j][vid]) - window_len):
+                for i in range(0, len(y_data[k][vid]) - window_len):
                     # select the current window of the video
-                    X = x_data[j][vid][i : i + window_len][:]
-                    y = y_data[j][vid][i : i + window_len]
-                    # add the current window the list of windows
+                    X = x_data[k][vid][i : i + window_len][:]
+                    y = y_data[k][vid][i : i + window_len]
+                    # add the current window to the list of windows
                     X_list.append(X)
                     Y_list.append(y)
-                # save videos into list
+
                 X_modality_list.append(np.asarray(X_list))  # Windowed data of all modalities is saved one by one
                 y_modality_list.append(np.asarray(Y_list))  # Windowed labels of all modalities is saved one by one
 
