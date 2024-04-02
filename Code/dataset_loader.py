@@ -61,8 +61,8 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
                 x = re.findall("[0-9]+", dir)[0]
                 if int(x) in shared_adl_vids:
                     adl.append(dir)
-        # print(falls)
-        # print(adl)
+        # print(len(falls))
+        # print(len(adl))
     elif fair_compairson == False:  # Load all fall and non-fall video directories.
         # create list of all fall and nonfall folders
         for root, dirs, files in os.walk("{}/Dataset/Fall-Data/{}/Fall".format(dataset_directory, dset)):
@@ -71,8 +71,12 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
         for root, dirs, files in os.walk("{}/Dataset/Fall-Data/{}/NonFall".format(dataset_directory, dset)):
             if len(dirs) > 0:
                 adl.extend(dirs)
-        # print(falls)
-        # print(adl)
+        # print(len(falls))
+        # print(len(adl))
+
+    # Sort the lists based on folder number (Based on the digits after 'Fall', 'NonFall')
+    falls.sort(key=lambda item: int(item.split("Fall")[1]))
+    adl.sort(key=lambda item: int(item.split("NonFall")[1]))
 
     x_data_fall = []  # Video data
     y_data_fall = []  # Label
@@ -306,7 +310,6 @@ def create_multimodal_pytorch_dataset(names, dsets, paths, window_len, fair_comp
                 try:
                     vid_total = data_dict[adl_name]["Data"][:]
                     if len(vid_total) < 10:
-                        print(adl_name)
                         continue
                     x_data_adl.append(vid_total)
                     x_info_adl.append(adl_name)  # [7:]

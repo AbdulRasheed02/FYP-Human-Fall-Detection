@@ -33,7 +33,7 @@ batch_size = 1  # No.of video folder(s) per batch (For train and test dataloader
 window_len = 8
 stride = 1
 fair_comparison = True  # For using common fall and non fall folders of all modalities
-metadata_set = 2  # 1 is Generated Locally, 2 is Downloaded from MUVIM Repo
+metadata_set = 1  # 1 is Generated Locally, 2 is Downloaded from MUVIM Repo. Always use 1 for multi modality
 TOD = "Both"  # Time of Day
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
