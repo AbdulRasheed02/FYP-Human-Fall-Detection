@@ -1,12 +1,14 @@
 IP Trials -
-1 : Baseline with BCEloss(), Threshold - {To Do}
-2 : Default GMG with BCEloss(), Threshold - {To Do}
+1 : Baseline with BCEloss(), {To Do}
+2 : Default GMG with BCEloss(), {To Do}
+3 : Default GMG with BCEloss(), Spatial Temporal Loss {To Do}
 
 Current Optimal - 
 
 ONI_IR Trials -
-1 : Baseline with BCEloss(), Threshold - {To Do}
-2 : Default GMG with BCEloss(), Threshold - {To Do}
+1 : Baseline with BCEloss(), {To Do}
+2 : Default GMG with BCEloss(), {To Do}
+3 : Default GMG with BCEloss(), Spatial Temporal Loss
 
 Current Optimal - 
 
@@ -14,5 +16,12 @@ Thermal Trials -
 1 : Baseline with BCEloss(), Threshold - 0.61
 2 : Baseline with BCEloss(), Threshold - 0.61
 3 : Default GMG with BCEloss(), Threshold - 0.65
+4 : Baseline with BCEloss()
+5 : Same Model from Trial 1, Optimal Threshold is Found
+6 : Default GMG with BCEloss()
+7 : Default GMG with BCEloss()
+8 : Default GMG with BCEloss()
+9 : Default GMG with BCEloss()
 
-Current Optimal Model - 3 : Default GMG with BCEloss(), Threshold - 0.65
+Current Optimal Model - 9 : Default GMG with BCEloss()
+        Best Baseline - 5 : Same Model from Trial 1, Optimal Threshold is Found 

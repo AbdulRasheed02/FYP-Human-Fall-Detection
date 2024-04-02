@@ -263,46 +263,74 @@ def get_total_performance_metrics(name, frame_stats, window_stats, window_len):
 
 
 def get_cnn_performance_metrics(total_stats):
-    tp = fn = fp = tn = 0
-    threshold = 0.65
+    tp_list = []
+    tn_list = []
+    fn_list = []
+    fp_list = []
 
-    for i in range(len(total_stats)):
-        output, labels = total_stats[i]
-        output = output[0]
-        labels = labels[0]
-        for j in range(len(output)):
-            if j < len(labels):
-                for k in range(len(output[j])):
-                    if k < len(labels[j]):
-                        if output[j][k] > threshold and labels[j][k] == 1:
-                            tp += 1
-                        elif output[j][k] > threshold and labels[j][k] == 0:
-                            fp += 1
-                        elif output[j][k] <= threshold and labels[j][k] == 1:
-                            fn += 1
-                        else:
-                            tn += 1
+    tpr_list = []
+    fpr_list = []
+    precision_list = []
+    recall_list = []
 
-    if tp + fn == 0:
-        tpr = 0
-    else:
-        tpr = tp / (tp + fn)
-    if fp + tn == 0:
-        fpr = 0
-    else:
-        fpr = fp / (fp + tn)
-    if tp + fp == 0:
-        precision = 0
-    else:
-        precision = tp / (tp + fp)
-    recall = tpr
+    for threshold in np.arange(0, 1.01, 0.01):
+        tp = fn = fp = tn = 0
 
+        for i in range(len(total_stats)):
+            output, labels = total_stats[i]
+            output = output[0]
+            labels = labels[0]
+            for j in range(len(output)):
+                if j < len(labels):
+                    for k in range(len(output[j])):
+                        if k < len(labels[j]):
+                            if output[j][k] > threshold and labels[j][k] == 1:
+                                tp += 1
+                            elif output[j][k] > threshold and labels[j][k] == 0:
+                                fp += 1
+                            elif output[j][k] <= threshold and labels[j][k] == 1:
+                                fn += 1
+                            else:
+                                tn += 1
+
+        if tp + fn == 0:
+            tpr = 0
+        else:
+            tpr = tp / (tp + fn)
+        if fp + tn == 0:
+            fpr = 0
+        else:
+            fpr = fp / (fp + tn)
+        if tp + fp == 0:
+            precision = 0
+        else:
+            precision = tp / (tp + fp)
+        recall = tpr
+
+        tp_list.append(tp)
+        tn_list.append(tn)
+        fn_list.append(fn)
+        fp_list.append(fp)
+
+        tpr_list.append(tpr)
+        fpr_list.append(fpr)
+        precision_list.append(precision)
+        recall_list.append(recall)
+
+    optimal_idx = np.argmax(np.array(tpr_list) - np.array(fpr_list))
+
+    optimal_threshold = optimal_idx * 0.01
     print(
         "----------------------------------\n",
         "CNN Performance Results\n",
-        "TPR {}, FPR {}, Precision {}, Recall {}\n".format(tpr, fpr, precision, recall),
-        "tn {}, fp {}, fn {}, tp {}\n".format(tn, fp, fn, tp),
-        "----------------------------------",
+        "Threshold {}\n".format(optimal_threshold),
+        "TPR {}, FPR {}, Precision {}, Recall {}\n".format(
+            tpr_list[optimal_idx], fpr_list[optimal_idx], precision_list[optimal_idx], recall_list[optimal_idx]
+        ),
+        "tn {}, fp {}, fn {}, tp {}\n".format(
+            tn_list[optimal_idx], fp_list[optimal_idx], fn_list[optimal_idx], tp_list[optimal_idx]
+        ),
+        "----------------------------------\n",
     )
 
 
