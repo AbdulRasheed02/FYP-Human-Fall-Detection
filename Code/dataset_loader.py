@@ -19,7 +19,7 @@ from parameters import (
     pad_video,
     key_frame_threshold,
     data_augmentation,
-    folders_to_be_augmented
+    folders_to_be_augmented,
 )
 from Feature_Extraction.background_subtractor import perform_background_subtraction
 from Frame_Utility.frame_utility import fall_frame_extractor, key_frame_extractor
@@ -147,46 +147,60 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
                     total_non_fall_frames_from_adl = total_non_fall_frames_from_adl + len(labels_total)
 
                 if feature_extraction:
-                    feature_extracted_vid_total = []
                     if background_subtraction:
-                        feature_extracted_vid_total = perform_background_subtraction(vid_total)
-                    # print("{} - {}".format(adl_name, len(feature_extracted_vid_total)))
-                    x_data_adl.append(feature_extracted_vid_total)
-                else:
-                    x_data_adl.append(vid_total)
+                        if anomaly_detection_model:
+                            vid_total = perform_background_subtraction(vid_total)
+                        else:
+                            # Background subtraction is already done in key frame extraction for CNN models
+                            vid_total = background_subtracted_key_frames
+                    # print("{} - {}".format(adl_name, len(vid_total)))
 
+                x_data_adl.append(vid_total)
                 x_info_adl.append(adl_name)  # [7:]
-                labels_total = data_dict[adl_name]["Labels"][:]
                 y_data_adl.append(labels_total)
+                # print("{} - {}, {} ".format(adl_name, len(vid_total), len(labels_total)))
             except:
                 print("Skipped", adl_name)
 
             # Exit after 5 adl directories (For dev and debugging)
             # if len(x_data_adl) == 5:
             #     break
-                
+
+        # Data Augmentation for ADL (Training Set for Autoencoder Model's)
         if data_augmentation:
             for adl_name in folders_to_be_augmented:
                 adl_name = "NonFall" + adl_name
                 try:
                     vid_total = data_dict[adl_name]["Data"][:]
-                    vid_total = augment_images(vid_total)
-                    # print("sup")
-                    # print(adl_name)
-                    # print("{} - {} ".format(adl_name, len(vid_total)))
+                    labels_total = data_dict[adl_name]["Labels"][:]
+                    # print("{} - {}, {} ".format(adl_name, len(vid_total), len(labels_total)))
                     if len(vid_total) < 10:
                         continue
+
+                    # Augment before key frame and feature extraction.
+                    vid_total = augment_images(vid_total)
+
+                    # For CNNs
+                    if not anomaly_detection_model:
+                        # Key frames from original video, background subtracted key frames, corresponding labels
+                        vid_total, background_subtracted_key_frames, labels_total = key_frame_extractor(
+                            vid_total, labels_total, key_frame_threshold
+                        )
+                        total_non_fall_frames_from_adl = total_non_fall_frames_from_adl + len(labels_total)
+
                     if feature_extraction:
-                        feature_extracted_vid_total = []
                         if background_subtraction:
-                            feature_extracted_vid_total = perform_background_subtraction(vid_total)
-                        # print("{} - {}".format(adl_name, len(feature_extracted_vid_total)))
-                        x_data_adl.append(feature_extracted_vid_total)
-                    else:
-                        x_data_adl.append(vid_total)
+                            if anomaly_detection_model:
+                                vid_total = perform_background_subtraction(vid_total)
+                            else:
+                                # Background subtraction is already done in key frame extraction for CNN models
+                                vid_total = background_subtracted_key_frames
+                        # print("{} - {}".format(adl_name, len(vid_total)))
+
+                    x_data_adl.append(vid_total)
                     x_info_adl.append(adl_name)  # [7:]
-                    labels_total = data_dict[adl_name]["Labels"][:]
                     y_data_adl.append(labels_total)
+                    # print("{} - {}, {} ".format(adl_name, len(vid_total), len(labels_total)))
                 except:
                     print("Skipped", adl_name)
                 # Exit after 5 adl directories (For dev and debugging)
