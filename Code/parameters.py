@@ -27,7 +27,7 @@ feature_extraction = background_subtraction  # Perform logical OR with future fe
 
 # Data augmentation
 data_augmentation = True  # Enable or disable data augmentation techniques
-folders_to_be_augmented = ['2', '3', '4', '5', '10', '13', '23', '28', '29',  '31', '34', '40', '41', '44', '45', '58', '62', '63', '66', '67', '73', '75', '83', '88']
+folders_to_be_augmented = ['2', '3', '4', '5', '10', '13', '23', '28', '29',  '31', '34', '40', '41', '44', '45', '58', '62', '63', '66', '67', '73', '75', '83', '88']  # fmt: skip
 
 batch_size = 1  # No.of video folder(s) per batch (For train and test dataloader)
 

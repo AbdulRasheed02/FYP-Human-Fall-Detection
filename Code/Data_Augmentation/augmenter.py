@@ -6,7 +6,7 @@ import numpy as np
 
 # Importing constants from parameters.py
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
-from parameters import project_directory, dataset_directory, dataset_category
+from parameters import project_directory, dataset_directory
 
 sys.path.remove(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 
@@ -44,7 +44,7 @@ def augment_images(image_list):
 
 # # For using preprocessed images from h5py as input
 # name = "Thermal_T3"
-# path = "{}\Dataset\H5PY\{}_Data_set-{}-imgdim64x64.h5".format(project_directory, dataset_category, name)
+# path = "{}\Dataset\H5PY\Data_set-{}-imgdim64x64.h5".format(project_directory, name)
 # with h5py.File(path, "r") as hf:
 #     data_dict = hf["{}/Processed/Split_by_video".format(name)]
 #     # Any fall or ADL di3rectory
