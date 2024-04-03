@@ -10,7 +10,7 @@ ONI_IR Trials -
 2 : Default GMG with BCEloss(), {To Do}
 3 : Default GMG with BCEloss(), Spatial Temporal Loss
 
-Current Optimal - 3
+Current Optimal - 3 : Default GMG with BCEloss(), Spatial Temporal Loss
 
 Thermal Trials -
 1 : Baseline with BCEloss(), Threshold - 0.61

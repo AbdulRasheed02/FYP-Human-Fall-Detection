@@ -2,6 +2,7 @@ IP Trials -
 1 : Baseline
 2 : Default GMG with L1loss()
 3 : Default GMG with MSEloss()
+4 : Default GMG with MSEloss(), FPS Adjusted Dataset {To Do}
 
 Current Optimal - 3 : Default GMG with MSEloss()
 
@@ -9,6 +10,7 @@ ONI_IR Trials -
 1 : Baseline
 2 : Default GMG with L1loss()
 3 : Default GMG with MSEloss()
+4 : Default GMG with L1loss(), FPS Adjusted Dataset {To Do} 
 
 Current Optimal - 2 : Default GMG with L1loss()  
 
