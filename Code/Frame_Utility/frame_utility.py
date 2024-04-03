@@ -6,7 +6,7 @@ import os
 
 # Importing constants from parameters.py
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
-from parameters import project_directory, key_frame_threshold
+from parameters import project_directory, key_frame_threshold, dataset_category
 from Feature_Extraction.background_subtractor import perform_background_subtraction
 
 sys.path.remove(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
@@ -74,7 +74,7 @@ def key_frame_extractor(vid_total, labels_total, threshold):
 
 # # For using preprocessed images from h5py as input
 # name = "Thermal_T3"
-# path = "{}\Dataset\H5PY\Data_set-{}-imgdim64x64.h5".format(project_directory, name)
+# path = "{}\Dataset\H5PY\{}_Data_set-{}-imgdim64x64.h5".format(project_directory,dataset_category, name)
 # with h5py.File(path, "r") as hf:
 #     data_dict = hf["{}/Processed/Split_by_video".format(name)]
 #     # Any Fall directory

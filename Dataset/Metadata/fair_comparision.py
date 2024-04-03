@@ -27,7 +27,7 @@ dataframes = []
 
 for modality in modalities:
     # Labels.csv file
-    labels = pd.read_csv("{}/Dataset/Fall-Data/{}/Labels.csv".format(dataset_directory, modality))
+    labels = pd.read_csv("{}/Dataset/Fall-Data/Base/{}/Labels.csv".format(dataset_directory, modality))
 
     """
     # Corner Case - There are video id's in labels.csv file for which corresponding folder does not exist in the dataset. 
@@ -37,7 +37,7 @@ for modality in modalities:
     labels_video_ids = labels["Video"].unique()
     # Find all the video id's from the dataset
     dataset_video_ids = []
-    for root, dirs, files in os.walk("{}/Dataset/Fall-Data/{}/Fall".format(dataset_directory, modality)):
+    for root, dirs, files in os.walk("{}/Dataset/Fall-Data/Base/{}/Fall".format(dataset_directory, modality)):
         for dir in dirs:
             # Ignore folders which have less than 10 videos (As this causes inconsistency for multi modality in dataset_loader.py file)
             if len(glob(f"{root}/{dir}/*")) >= 10:
@@ -69,15 +69,15 @@ print("Shared Day Fall Vids - {}".format(len(day_vids)))
 # For ADL Videos
 # Ignore folders which have less than 10 videos (As this causes inconsistency for multi modality in dataset_loader.py file)
 
-Thermal_falls = glob("{}/Dataset/Fall-Data/{}/NonFall/*".format(dataset_directory, modalities[0]))
+Thermal_falls = glob("{}/Dataset/Fall-Data/Base/{}/NonFall/*".format(dataset_directory, modalities[0]))
 # [63:] Extract folder number from path
 Thermal_falls = [Thermal_fall[63:] for Thermal_fall in Thermal_falls if len(glob(f"{Thermal_fall}/*")) >= 10]
 
-ONI_IR_falls = glob("{}/Dataset/Fall-Data/{}/NonFall/*".format(dataset_directory, modalities[1]))
+ONI_IR_falls = glob("{}/Dataset/Fall-Data/Base/{}/NonFall/*".format(dataset_directory, modalities[1]))
 # [62:] Extract folder number from path
 ONI_IR_falls = [ONI_IR_fall[62:] for ONI_IR_fall in ONI_IR_falls if len(glob(f"{ONI_IR_fall}/*")) >= 10]
 
-IP_falls = glob("{}/Dataset/Fall-Data/{}/NonFall/*".format(dataset_directory, modalities[2]))
+IP_falls = glob("{}/Dataset/Fall-Data/Base/{}/NonFall/*".format(dataset_directory, modalities[2]))
 # [58:] Extract folder number from path
 IP_falls = [IP_fall[58:] for IP_fall in IP_falls if len(glob(f"{IP_fall}/*")) >= 10]
 

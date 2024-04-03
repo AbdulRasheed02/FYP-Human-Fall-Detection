@@ -38,10 +38,11 @@ https://github.com/MUVIM/FallDetection
 #### Dataset Directory Layout
 
 1. Download the zip file(s) corresponding to each modality.
-2. Extract the downloaded zip file(s) of each modality to their corresponding folders within the Dataset\Fall-Data directory. (This can be done on your local storage or an external hard drive.)
+2. Extract the downloaded zip file(s) of each modality to their corresponding folders within the Dataset\Fall-Data\Base directory. (This can be done on your local storage or an external hard drive.)
 
 ### How to Run
 
 1. Run Dataset\dataset_creator.py for each modality to generate a compressed h5py file.
 2. Run Code\single_modality.ipynb for training and testing a model on any modality.
+   Run Code\multi_modality.ipynb for training and testing a model on two modalities.
 3. Adjust parameters in Code\parameters.py

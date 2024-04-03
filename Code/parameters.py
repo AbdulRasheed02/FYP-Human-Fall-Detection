@@ -18,6 +18,13 @@ else:
 
 ht, wd = 64, 64  # Preprocessed image dimensions
 
+frame_rate_adjusted_dataset = False  # Use dataset adjusted to 8 fps
+if frame_rate_adjusted_dataset:
+    dataset_category = "FPS-Adjusted"
+else:
+    dataset_category = "Base"
+
+
 # Feature Extraction
 background_subtraction = False  # Enable or disable background subtraction
 background_subtraction_algorithms = ["GMG", "MOG2", "MOG"]
@@ -26,7 +33,7 @@ background_subtraction_algorithm = background_subtraction_algorithms[0]  # Choos
 feature_extraction = background_subtraction  # Perform logical OR with future feature extraction methods' flags
 
 # Data augmentation
-data_augmentation = True  # Enable or disable data augmentation techniques
+data_augmentation = False  # Enable or disable data augmentation techniques
 folders_to_be_augmented = ['2', '3', '4', '5', '10', '13', '23', '28', '29',  '31', '34', '40', '41', '44', '45', '58', '62', '63', '66', '67', '73', '75', '83', '88']  # fmt: skip
 
 batch_size = 1  # No.of video folder(s) per batch (For train and test dataloader)
@@ -70,7 +77,6 @@ w2 = 0.00001
 # Multi-modal parameters
 multi_modal_models = [MultiModal_3DCAE]
 multi_modal_model = multi_modal_models[0]
-frame_rate_adjusted_dataset = False  # Use dataset adjusted to 8 fps
 # If true : For a specific video across all the modalities, the video will be padded to match the modality with the maximum length video
 # If false : For a specific video across all the modalities, the video will be trimmed to match the modality with the minimum length video
 pad_video = False

@@ -11,6 +11,7 @@ from parameters import (
     dataset_directory,
     background_subtraction_algorithms,
     background_subtraction_algorithm,
+    dataset_category,
 )
 
 sys.path.remove(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
@@ -122,7 +123,7 @@ def perform_background_subtraction(vid_total):
 
 # # For using preprocessed images from h5py as input
 # name = "Thermal_T3"
-# path = "{}\Dataset\H5PY\Data_set-{}-imgdim64x64.h5".format(project_directory, name)
+# path = "{}\Dataset\H5PY\{}_Data_set-{}-imgdim64x64.h5".format(project_directory, dataset_category, name)
 # with h5py.File(path, "r") as hf:
 #     data_dict = hf["{}/Processed/Split_by_video".format(name)]
 #     # Any fall or ADL directory
@@ -132,7 +133,7 @@ def perform_background_subtraction(vid_total):
 # # For using original images from the dataset as input
 # modality = "Thermal"
 # # Any fall or ADL directory
-# folder_location = "{}\Dataset\Fall-Data\{}\Fall\Fall0".format(dataset_directory, modality)
+# folder_location = "{}\Dataset\Fall-Data\{}\{}\Fall\Fall0".format(dataset_directory, dataset_category, modality)
 # vid_total = []
 # for filename in os.listdir(folder_location):
 #     # Get the full path of the image

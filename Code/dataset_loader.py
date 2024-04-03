@@ -8,6 +8,7 @@ from io import StringIO
 from parameters import (
     project_directory,
     dataset_directory,
+    dataset_category,
     feature_extraction,
     background_subtraction,
     batch_size,
@@ -53,13 +54,17 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
 
         # print(shared_fall_vids)
         # create specfic list of fall folders and nonfall folders (Day or Night or Shared)
-        for root, dirs, files in os.walk("{}/Dataset/Fall-Data/{}/Fall".format(dataset_directory, dset)):
+        for root, dirs, files in os.walk(
+            "{}/Dataset/Fall-Data/{}/{}/Fall".format(dataset_directory, dataset_category, dset)
+        ):
             for dir in dirs:
                 x = re.findall("[0-9]+", dir)[0]
                 if (int(x) in shared_fall_vids) and (int(x) in tod_list):
                     falls.append(dir)
 
-        for root, dirs, files in os.walk("{}/Dataset/Fall-Data/{}/NonFall".format(dataset_directory, dset)):
+        for root, dirs, files in os.walk(
+            "{}/Dataset/Fall-Data/{}/{}/NonFall".format(dataset_directory, dataset_category, dset)
+        ):
             for dir in dirs:
                 x = re.findall("[0-9]+", dir)[0]
                 if int(x) in shared_adl_vids:
@@ -68,10 +73,14 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
         # print(len(adl))
     elif fair_compairson == False:  # Load all fall and non-fall video directories.
         # create list of all fall and nonfall folders
-        for root, dirs, files in os.walk("{}/Dataset/Fall-Data/{}/Fall".format(dataset_directory, dset)):
+        for root, dirs, files in os.walk(
+            "{}/Dataset/Fall-Data/{}/{}/Fall".format(dataset_directory, dataset_category, dset)
+        ):
             if len(dirs) > 0:
                 falls.extend(dirs)
-        for root, dirs, files in os.walk("{}/Dataset/Fall-Data/{}/NonFall".format(dataset_directory, dset)):
+        for root, dirs, files in os.walk(
+            "{}/Dataset/Fall-Data/{}/{}/NonFall".format(dataset_directory, dataset_category, dset)
+        ):
             if len(dirs) > 0:
                 adl.extend(dirs)
         # print(len(falls))
@@ -298,13 +307,17 @@ def create_multimodal_pytorch_dataset(names, dsets, paths, window_len, fair_comp
                 "{}/Dataset/Metadata/shared_fall_vids_{}.txt".format(project_directory, metadata_set)
             ).astype(int)
             # create list of all fall and nonfall folders
-            for root, dirs, files in os.walk("{}/Dataset/Fall-Data/{}/Fall".format(dataset_directory, dset)):
+            for root, dirs, files in os.walk(
+                "{}/Dataset/Fall-Data/{}/{}/Fall".format(dataset_directory, dataset_category, dset)
+            ):
                 for dir in dirs:
                     x = re.findall("[0-9]+", dir)[0]
                     if int(x) in shared_fall_vids:
                         falls.append(dir)
 
-            for root, dirs, files in os.walk("{}/Dataset/Fall-Data/{}/NonFall".format(dataset_directory, dset)):
+            for root, dirs, files in os.walk(
+                "{}/Dataset/Fall-Data/{}/{}/NonFall".format(dataset_directory, dataset_category, dset)
+            ):
                 for dir in dirs:
                     x = re.findall("[0-9]+", dir)[0]
                     if int(x) in shared_adl_vids:
@@ -312,10 +325,14 @@ def create_multimodal_pytorch_dataset(names, dsets, paths, window_len, fair_comp
 
         elif fair_compairson == False:
             # create list of all fall and nonfall folders
-            for root, dirs, files in os.walk("{}/Dataset/Fall-Data/{}/Fall".format(dataset_directory, dset)):
+            for root, dirs, files in os.walk(
+                "{}/Dataset/Fall-Data/{}/{}/Fall".format(dataset_directory, dataset_category, dset)
+            ):
                 if len(dirs) > 0:
                     falls.extend(dirs)
-            for root, dirs, files in os.walk("{}/Dataset/Fall-Data/{}/NonFall".format(dataset_directory, dset)):
+            for root, dirs, files in os.walk(
+                "{}/Dataset/Fall-Data/{}/{}/NonFall".format(dataset_directory, dataset_category, dset)
+            ):
                 if len(dirs) > 0:
                     adl.extend(dirs)
 

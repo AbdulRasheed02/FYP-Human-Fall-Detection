@@ -27,6 +27,7 @@ Thermal Trials -
 16 : Modified GMG with L1loss()
 17 : Modified GMG with L1loss()
 18 : Modified GMG with L1loss()
+19 : Default GMG with L1loss(), FPS Adjusted Dataset
 
 Current Optimal Model - 6 : Default GMG with L1loss()
                         16 : Modified GMG with L1loss()

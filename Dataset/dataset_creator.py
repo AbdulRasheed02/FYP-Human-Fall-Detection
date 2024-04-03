@@ -9,7 +9,7 @@ import sys
 
 # Importing constants from parameters.py
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
-from Code.parameters import project_directory, dataset_directory, ht, wd
+from Code.parameters import project_directory, dataset_directory, ht, wd, dataset_category
 
 sys.path.remove(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 
@@ -60,7 +60,9 @@ def init_videos(img_width, img_height, raw, sort, fill_depth, dset, folder_locat
         folder_location: path to the dataset folder
     """
 
-    path = "{}\\Dataset\H5PY\\Data_set-{}-imgdim{}x{}.h5".format(project_directory, dset, img_width, img_height)
+    path = "{}\\Dataset\H5PY\\{}_Data_set-{}-imgdim{}x{}.h5".format(
+        project_directory, dataset_category, dset, img_width, img_height
+    )
 
     # Retrieves lists of directories containing Fall and NonFall videos.
     vid_dir_list_0, vid_dir_list_1 = get_dir_lists(dset, folder_location)
@@ -315,7 +317,7 @@ for i in range(len(modalities)):
     # location of were your dataset is stored
     modality = modalities[i]
     dset = dsets[i]
-    folder_location = "{}\Dataset\Fall-Data\{}".format(dataset_directory, modality)
+    folder_location = "{}\Dataset\Fall-Data\{}\{}".format(dataset_directory, dataset_category, modality)
     print(folder_location)
     print(modality)
 
