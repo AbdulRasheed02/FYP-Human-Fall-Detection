@@ -14,26 +14,33 @@ File - Dataset\dataset_creator.py
 Input - Raw dataset
 Output - h5py file containing compressed preprocessed data
 
-3. Data Augmentation
+3. Fair Comparision
+
+File - Dataset\Metadata\fair_comparision.py
+Input - Raw dataset
+Output - a. Video folders common across all modalities for fall and adl
+         b. Video folders according to Time of Day (Day or Night)
+
+4. Data Augmentation
     a. Random rotation
     b. Random brightness adjustment
     c. Horizontal flips
 
 File - Code\Data_Augmentation\augmenter.py
 
-4. Key Frame Extraction
+5. Key Frame Extraction
     a. Using Background Subtraction (File - Code\Feature_Extraction\background_subtraction.py)
     b. Using Optical Flow (File - Code\Feature_Extraction\optical_flow.py)
 
 File - Code\Frame_Utility\frame_utility.py
 
-5. Feature Extraction
+6. Feature Extraction
     a. Backgroud Subtraction (File - Code\Feature_Extraction\background_subtraction.py)
         i. GMG
         ii. MOG2
         iii. MOG
 
-6. Deep Learning Model
+7. Deep Learning Model
     a. Unimodal
         i. Base_3DCAE (File - Code\Models\Base_3DCAE.py )
         ii. Base_3DCAE_2 (File - Code\Models\Base_3DCAE_2.py)
@@ -41,6 +48,6 @@ File - Code\Frame_Utility\frame_utility.py
     b. Multimodal  
         i. MultiModal_3DCAE (File - Code\Models\MultiModal_3DCAE.py)
 
-7. Spatial Temporal Loss
+8. Spatial Temporal Loss
 
 File - Code\Custom_Loss\spatial_temporal_loss.py
