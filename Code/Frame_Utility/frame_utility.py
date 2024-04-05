@@ -6,8 +6,18 @@ import os
 
 # Importing constants from parameters.py
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
-from parameters import project_directory, key_frame_threshold, dataset_category
+from parameters import (
+    project_directory,
+    bg_subtraction_threshold,
+    dataset_category,
+    key_frame_extraction_algorithms,
+    key_frame_extraction_algorithm,
+    thermal_optical_flow_threshold,
+    oni_ir_optical_flow_threshold,
+    ip_optical_flow_threshold,
+)
 from Feature_Extraction.background_subtractor import perform_background_subtraction
+from Feature_Extraction.optical_flow import calculate_optical_flow
 
 sys.path.remove(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 
@@ -40,20 +50,42 @@ def fall_frame_extractor(vid_total, labels_total):
     return vid_total, labels_total
 
 
-def key_frame_extractor(vid_total, labels_total, threshold):
-    background_subtracted_vid_total = perform_background_subtraction(vid_total)
+def key_frame_extractor(vid_total, labels_total, modality):
     key_frame_indices = []
 
-    for index, frame in enumerate(background_subtracted_vid_total):
-        # Calculate movement ratio (percentage of non-zero pixels)
-        movement_ratio = np.count_nonzero(frame) / (frame.shape[0] * frame.shape[1])
-        if movement_ratio > threshold:  # Extract keyframe based on movement threshold
-            key_frame_indices.append(index)
-            # cv2.imshow("Key frame", frame)
-            # # Exit on 'q' press
-            # k = cv2.waitKey(30) & 0xFF
-            # if k == 27:
-            #     break
+    if key_frame_extraction_algorithm == key_frame_extraction_algorithms[0]:
+        background_subtracted_vid_total = perform_background_subtraction(vid_total)
+
+        for index, frame in enumerate(background_subtracted_vid_total):
+            # Calculate movement ratio (percentage of non-zero pixels)
+            movement_ratio = np.count_nonzero(frame) / (frame.shape[0] * frame.shape[1])
+            if movement_ratio > bg_subtraction_threshold:  # Extract keyframe based on movement threshold
+                key_frame_indices.append(index)
+                # cv2.imshow("Key frame", frame)
+                # # Exit on 'q' press
+                # k = cv2.waitKey(30) & 0xFF
+                # if k == 27:
+                #     break
+
+    elif key_frame_extraction_algorithm == key_frame_extraction_algorithms[1]:
+        optical_flow_values = calculate_optical_flow(vid_total)
+
+        if modality == "Thermal_T3":
+            optical_flow_threshold = thermal_optical_flow_threshold
+        elif modality == "ONI_IR_T":
+            optical_flow_threshold = oni_ir_optical_flow_threshold
+        elif modality == "IP_T":
+            optical_flow_threshold = ip_optical_flow_threshold
+        # print(optical_flow_threshold)
+
+        for index, magnitude in enumerate(optical_flow_values):
+            if magnitude > optical_flow_threshold:
+                key_frame_indices.append(index)
+                # cv2.imshow("Key frame", vid_total[index])
+                # # Exit on 'q' press
+                # k = cv2.waitKey(30) & 0xFF
+                # if k == 27:
+                #     break
 
     # To prevent downstream error when length of vid_total is less than 10
     if len(key_frame_indices) < 10:
@@ -64,24 +96,29 @@ def key_frame_extractor(vid_total, labels_total, threshold):
 
     # Extract original keyframes from vid_total using key_frame_indices
     vid_total = [vid_total[i] for i in key_frame_indices]
-    # Extract background subtracted keyframes using key_frame_indices
-    background_subtracted_key_frames = [background_subtracted_vid_total[i] for i in key_frame_indices]
     # Extract corresponding labels from labels_total using key_frame_indices
     labels_total = [labels_total[i] for i in key_frame_indices]
+
+    if key_frame_extraction_algorithm == key_frame_extraction_algorithms[0]:
+        # If key frame extraction algorithm was background subtraction, Extract background subtracted keyframes using key_frame_indices
+        background_subtracted_key_frames = [background_subtracted_vid_total[i] for i in key_frame_indices]
+    else:
+        # If key frame extraction algorithm was not background subtraction, return empty list. BUT DO NOT MAKE USE OF IT
+        background_subtracted_key_frames = []
 
     return vid_total, np.array(background_subtracted_key_frames), labels_total
 
 
 # # For using preprocessed images from h5py as input
 # name = "Thermal_T3"
-# path = "{}\Dataset\H5PY\{}_Data_set-{}-imgdim64x64.h5".format(project_directory,dataset_category, name)
+# path = "{}\Dataset\H5PY\{}_Data_set-{}-imgdim64x64.h5".format(project_directory, dataset_category, name)
 # with h5py.File(path, "r") as hf:
 #     data_dict = hf["{}/Processed/Split_by_video".format(name)]
 #     # Any Fall directory
-#     # vid_total_fall = data_dict["Fall0"]["Data"][:]
-#     # labels_total_fall = data_dict["Fall0"]["Labels"][:]
-#     # fall_frame_extractor(vid_total_fall, labels_total_fall)
-#     # # Any ADL directory
-#     # vid_total_non_fall = data_dict["NonFall0"]["Data"][:]
-#     # labels_total_non_fall = data_dict["NonFall0"]["Labels"][:]
-#     # key_frame_extractor(vid_total_non_fall, labels_total_non_fall, key_frame_threshold)
+#     vid_total_fall = data_dict["Fall0"]["Data"][:]
+#     labels_total_fall = data_dict["Fall0"]["Labels"][:]
+#     fall_frame_extractor(vid_total_fall, labels_total_fall)
+#     # Any ADL directory
+#     vid_total_non_fall = data_dict["NonFall0"]["Data"][:]
+#     labels_total_non_fall = data_dict["NonFall0"]["Labels"][:]
+#     key_frame_extractor(vid_total_non_fall, labels_total_non_fall)

@@ -5,6 +5,8 @@ IP Trials -
 4 : Default GMG with L1loss(), FPS Adjusted Dataset
 5 : Default GMG with MSEloss(), FPS Adjusted Dataset
 6 : Default GMG with L1loss(), FPS Adjusted Dataset
+7 : Optical Flow, Default GMG with MSEloss()
+8 : Optical Flow, Default GMG with L1loss(), FPS Adjusted Dataset
 
 Current Optimal - 3 : Default GMG with MSEloss() / 4 : Default GMG with L1loss(), FPS Adjusted Dataset
 
@@ -14,6 +16,8 @@ ONI_IR Trials -
 3 : Default GMG with MSEloss()
 4 : Default GMG with L1loss(), FPS Adjusted Dataset
 5 : Default GMG with MSEloss(), FPS Adjusted Dataset
+6 : BG Subtraction, Default GMG with L1loss(), FPS Adjusted Dataset
+7 : Optical Flow, Default GMG with L1loss(), FPS Adjusted Dataset
 
 Current Optimal - 4 : Default GMG with L1loss(), FPS Adjusted Dataset
 
@@ -34,6 +38,12 @@ Thermal Trials -
 18 : Modified GMG with L1loss()
 19 : Default GMG with L1loss(), FPS Adjusted Dataset
 20 : Default GMG with L1loss(), FPS Adjusted Dataset
+21 : BG Subtraction, Default GMG with L1loss()
+22 : BG Subtraction, Default GMG with MSEloss()
+23 : BG Subtraction, Default GMG with Huberloss()
+24 : BG Subtraction, Default GMG with SmoothL1loss()
+25 : Optical Flow, L1loss()
+26 : Optical Flow, Default GMG with L1loss()
 
 Current Optimal Model - 6 : Default GMG with L1loss()
                         16 : Modified GMG with L1loss()

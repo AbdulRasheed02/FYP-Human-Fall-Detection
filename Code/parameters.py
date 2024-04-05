@@ -31,14 +31,24 @@ else:
 # Data augmentation
 data_augmentation = False  # Enable or disable data augmentation techniques
 folders_to_be_augmented = ['2', '3', '4', '5', '10', '13', '23', '28', '29',  '31', '34', '40', '41', '44', '45', '58', '62', '63', '66', '67', '73', '75', '83', '88']  # fmt: skip
+
+# Key Frame Extraction (Always set true for CNN Models, Optional for Autoencoder Models)
+key_frame_extraction = False  # Enable or disable background subtraction
+key_frame_extraction_algorithms = ["BG_Subtraction", "Optical_Flow"]
+key_frame_extraction_algorithm = key_frame_extraction_algorithms[1]
+# Minimum Percentage of non-zero pixels required to classify as a key_frame
+bg_subtraction_threshold = 0.001
+# Minimum value of Optical flow required to classify as a key_frame
+thermal_optical_flow_threshold = 0.00005
+ip_optical_flow_threshold = 0.001
+oni_ir_optical_flow_threshold = 0.00005
+
 # Feature Extraction
 background_subtraction = False  # Enable or disable background subtraction
 background_subtraction_algorithms = ["GMG", "MOG2", "MOG"]
 background_subtraction_algorithm = background_subtraction_algorithms[0]  # Choose the algorithm to be used
 
 feature_extraction = background_subtraction  # Perform logical OR with future feature extraction methods' flags
-
-key_frame_threshold = 0.001  # Percentage of non-zero pixels required to classify as key_frame
 
 batch_size = 1  # No.of video folder(s) per batch (For train and test dataloader)
 window_len = 8
@@ -89,10 +99,12 @@ preset = 0
 if preset == 1:
     anomaly_detection_model = True
     model = models[0]
+    key_frame_extraction = False  # Performance is bad if True
 elif preset == 2:
     anomaly_detection_model = False
     model = models[2]
     loss_fn = loss_fns[0]
+    key_frame_extraction = True
 elif preset == 3:
     anomaly_detection_model = True
     multi_modal_model = multi_modal_models[0]

@@ -1,32 +1,46 @@
-Data Preprocessing
-1. RGB to Greyscale
-2. Resizing
-3. Mean Centering
-4. Rescaling
+1. Data FPS Adjustment
+
+File - Dataset\fps_adjuster.py
+Input - 20 Fps or 4 Fps Dataset, Labels
+Output - 8 Fps Dataset, Adjusted Labels
+
+2. Data Preprocessing
+    a. RGB to Greyscale
+    b. Resizing
+    c. Mean Centering
+    d. Rescaling
 
 File - Dataset\dataset_creator.py
 Input - Raw dataset
 Output - h5py file containing compressed preprocessed data
 
-Data Augmentation
-1.
-2.
-3.
-4.
+3. Data Augmentation
+    a. Random rotation
+    b. Random brightness adjustment
+    c. Horizontal flips
 
-File - 
+File - Code\Data_Augmentation\augmenter.py
 
-Feature Extraction
-1. Backgroud Subtraction (File - Code\Feature_Extraction\background_subtraction.py)
-2. Optical Flow
-3. 
-4.
+4. Key Frame Extraction
+    a. Using Background Subtraction (File - Code\Feature_Extraction\background_subtraction.py)
+    b. Using Optical Flow (File - Code\Feature_Extraction\optical_flow.py)
 
-Deep Learning Model
-a. Unimodal
-    1. Base_3DCAE
-    2. Base_3DCAE_2
-    3. CNN_3D
-b. Multimodal  
-    1. MultiModal_3DCAE
-    2.
+File - Code\Frame_Utility\frame_utility.py
+
+5. Feature Extraction
+    a. Backgroud Subtraction (File - Code\Feature_Extraction\background_subtraction.py)
+        i. GMG
+        ii. MOG2
+        iii. MOG
+
+6. Deep Learning Model
+    a. Unimodal
+        i. Base_3DCAE (File - Code\Models\Base_3DCAE.py )
+        ii. Base_3DCAE_2 (File - Code\Models\Base_3DCAE_2.py)
+        iii. CNN_3D (File - Code\Models\CNN_3D.py)
+    b. Multimodal  
+        i. MultiModal_3DCAE (File - Code\Models\MultiModal_3DCAE.py)
+
+7. Spatial Temporal Loss
+
+File - Code\Custom_Loss\spatial_temporal_loss.py

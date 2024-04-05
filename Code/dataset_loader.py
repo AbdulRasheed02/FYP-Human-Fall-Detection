@@ -18,7 +18,9 @@ from parameters import (
     test_size,
     metadata_set,
     pad_video,
-    key_frame_threshold,
+    key_frame_extraction,
+    key_frame_extraction_algorithm,
+    key_frame_extraction_algorithms,
     data_augmentation,
     folders_to_be_augmented,
 )
@@ -117,15 +119,30 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
                 if len(vid_total) < 10:
                     continue
 
-                # For CNNs
-                if not anomaly_detection_model:
-                    # Fall frames from original video, corrresponding labels
-                    vid_total, labels_total = fall_frame_extractor(vid_total, labels_total)
-                    total_fall_frames = total_fall_frames + len(labels_total)
+                if key_frame_extraction:
+                    # For Autoencoders, only Fall folders will be used for testing. So both Fall and ADL frames should be extracted
+                    if anomaly_detection_model:
+                        vid_total, background_subtracted_key_frames, labels_total = key_frame_extractor(
+                            vid_total, labels_total, modality=name
+                        )
+                    # For CNNs, Both Fall and ADL folders will be used for testing. So extract only Fall frames to minimise class imbalance
+                    else:
+                        # Fall frames from original video, corrresponding labels
+                        vid_total, labels_total = fall_frame_extractor(vid_total, labels_total)
+                        total_fall_frames = total_fall_frames + len(labels_total)
+                    # print("{} - {}, {} ".format(Fall_name, len(vid_total), len(labels_total)))
 
                 if feature_extraction:
                     if background_subtraction:
-                        vid_total = perform_background_subtraction(vid_total)
+                        # If background subtraction algorithm was already used for key frame extraction, reuse that
+                        if (
+                            key_frame_extraction
+                            & anomaly_detection_model
+                            & (key_frame_extraction_algorithm == key_frame_extraction_algorithms[0])
+                        ):
+                            vid_total = background_subtracted_key_frames
+                        else:
+                            vid_total = perform_background_subtraction(vid_total)
                     # print("{} - {}".format(Fall_name, len(vid_total)))
 
                 x_data_fall.append(vid_total)
@@ -147,21 +164,24 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
                 if len(vid_total) < 10:
                     continue
 
-                # For CNNs
-                if not anomaly_detection_model:
+                if key_frame_extraction:
+                    # For Both Autoencoders and CNNs.
                     # Key frames from original video, background subtracted key frames, corresponding labels
                     vid_total, background_subtracted_key_frames, labels_total = key_frame_extractor(
-                        vid_total, labels_total, key_frame_threshold
+                        vid_total, labels_total, modality=name
                     )
                     total_non_fall_frames_from_adl = total_non_fall_frames_from_adl + len(labels_total)
+                    # print("{} - {}, {} ".format(adl_name, len(vid_total), len(labels_total)))
 
                 if feature_extraction:
                     if background_subtraction:
-                        if anomaly_detection_model:
-                            vid_total = perform_background_subtraction(vid_total)
-                        else:
-                            # Background subtraction is already done in key frame extraction for CNN models
+                        # If background subtraction algorithm was already used for key frame extraction, reuse that
+                        if key_frame_extraction & (
+                            key_frame_extraction_algorithm == key_frame_extraction_algorithms[0]
+                        ):
                             vid_total = background_subtracted_key_frames
+                        else:
+                            vid_total = perform_background_subtraction(vid_total)
                     # print("{} - {}".format(adl_name, len(vid_total)))
 
                 x_data_adl.append(vid_total)
@@ -189,21 +209,24 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
                     # Augment before key frame and feature extraction.
                     vid_total = augment_images(vid_total)
 
-                    # For CNNs
-                    if not anomaly_detection_model:
+                    if key_frame_extraction:
+                        # For Both Autoencoders and CNNs.
                         # Key frames from original video, background subtracted key frames, corresponding labels
                         vid_total, background_subtracted_key_frames, labels_total = key_frame_extractor(
-                            vid_total, labels_total, key_frame_threshold
+                            vid_total, labels_total, modality=name
                         )
                         total_non_fall_frames_from_adl = total_non_fall_frames_from_adl + len(labels_total)
+                        # print("{} - {}, {} ".format(Fall_name, len(vid_total), len(labels_total)))
 
                     if feature_extraction:
                         if background_subtraction:
-                            if anomaly_detection_model:
-                                vid_total = perform_background_subtraction(vid_total)
-                            else:
-                                # Background subtraction is already done in key frame extraction for CNN models
+                            # If background subtraction algorithm was already used for key frame extraction, reuse that
+                            if key_frame_extraction & (
+                                key_frame_extraction_algorithm == key_frame_extraction_algorithms[0]
+                            ):
                                 vid_total = background_subtracted_key_frames
+                            else:
+                                vid_total = perform_background_subtraction(vid_total)
                         # print("{} - {}".format(adl_name, len(vid_total)))
 
                     x_data_adl.append(vid_total)
