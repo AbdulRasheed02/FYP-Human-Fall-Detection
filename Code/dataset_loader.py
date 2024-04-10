@@ -235,6 +235,7 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
                     # print("{} - {}, {} ".format(adl_name, len(vid_total), len(labels_total)))
                 except:
                     print("Skipped", adl_name)
+
                 # Exit after 5 adl directories (For dev and debugging)
                 # if len(x_data_adl) == 5:
                 #     break
@@ -345,7 +346,6 @@ def create_multimodal_pytorch_dataset(names, dsets, paths, window_len, fair_comp
                     x = re.findall("[0-9]+", dir)[0]
                     if int(x) in shared_adl_vids:
                         adl.append(dir)
-
         elif fair_compairson == False:
             # create list of all fall and nonfall folders
             for root, dirs, files in os.walk(
@@ -359,6 +359,10 @@ def create_multimodal_pytorch_dataset(names, dsets, paths, window_len, fair_comp
                 if len(dirs) > 0:
                     adl.extend(dirs)
 
+        # Sort the lists based on folder number (Based on the digits after 'Fall', 'NonFall')
+        falls.sort(key=lambda item: int(item.split("Fall")[1]))
+        adl.sort(key=lambda item: int(item.split("NonFall")[1]))
+
         x_data_fall = []  # Video data
         y_data_fall = []  # Label
         x_info_fall = []  # Directory name/number
@@ -367,9 +371,11 @@ def create_multimodal_pytorch_dataset(names, dsets, paths, window_len, fair_comp
         y_data_adl = []
         x_info_adl = []
 
+        total_fall_frames = total_non_fall_frames_from_adl = 0
+
         # path = "processed_data\data_set-{}-imgdim64x64.h5".format(name)
 
-        # load in images of falls
+        # Loop through fall and non-fall directories, loading video data and labels into respective lists.
         with h5py.File(path, "r") as hf:
             data_dict = hf["{}/Processed/Split_by_video".format(name)]
             # print(data_dict.keys())
@@ -377,12 +383,41 @@ def create_multimodal_pytorch_dataset(names, dsets, paths, window_len, fair_comp
             for Fall_name in falls:
                 try:
                     vid_total = data_dict[Fall_name]["Data"][:]
+                    labels_total = data_dict[Fall_name]["Labels"][:]
+                    # print("{} - {}, {} ".format(Fall_name, len(vid_total), len(labels_total)))
                     if len(vid_total) < 10:
                         continue
+
+                    if key_frame_extraction:
+                        # For Autoencoders, only Fall folders will be used for testing. So both Fall and ADL frames should be extracted
+                        if anomaly_detection_model:
+                            vid_total, background_subtracted_key_frames, labels_total = key_frame_extractor(
+                                vid_total, labels_total, modality=name
+                            )
+                        # For CNNs, Both Fall and ADL folders will be used for testing. So extract only Fall frames to minimise class imbalance
+                        else:
+                            # Fall frames from original video, corrresponding labels
+                            vid_total, labels_total = fall_frame_extractor(vid_total, labels_total)
+                            total_fall_frames = total_fall_frames + len(labels_total)
+                        # print("{} - {}, {} ".format(Fall_name, len(vid_total), len(labels_total)))
+
+                    if feature_extraction:
+                        if background_subtraction:
+                            # If background subtraction algorithm was already used for key frame extraction, reuse that
+                            if (
+                                key_frame_extraction
+                                & anomaly_detection_model
+                                & (key_frame_extraction_algorithm == key_frame_extraction_algorithms[0])
+                            ):
+                                vid_total = background_subtracted_key_frames
+                            else:
+                                vid_total = perform_background_subtraction(vid_total)
+                        # print("{} - {}".format(Fall_name, len(vid_total)))
+
                     x_data_fall.append(vid_total)
-                    x_info_fall.append(Fall_name)  # [4:]
-                    labels_total = data_dict[Fall_name]["Labels"][:]
+                    x_info_fall.append(Fall_name)  # [7:]
                     y_data_fall.append(labels_total)
+                    # print("{} - {}, {} ".format(Fall_name, len(vid_total), len(labels_total)))
                 except:
                     print("Skipped", Fall_name)
 
@@ -393,18 +428,86 @@ def create_multimodal_pytorch_dataset(names, dsets, paths, window_len, fair_comp
             for adl_name in adl:
                 try:
                     vid_total = data_dict[adl_name]["Data"][:]
+                    labels_total = data_dict[adl_name]["Labels"][:]
+                    # print("{} - {}, {} ".format(adl_name, len(vid_total), len(labels_total)))
                     if len(vid_total) < 10:
                         continue
+
+                    if key_frame_extraction:
+                        # For Both Autoencoders and CNNs.
+                        # Key frames from original video, background subtracted key frames, corresponding labels
+                        vid_total, background_subtracted_key_frames, labels_total = key_frame_extractor(
+                            vid_total, labels_total, modality=name
+                        )
+                        total_non_fall_frames_from_adl = total_non_fall_frames_from_adl + len(labels_total)
+                        # print("{} - {}, {} ".format(adl_name, len(vid_total), len(labels_total)))
+
+                    if feature_extraction:
+                        if background_subtraction:
+                            # If background subtraction algorithm was already used for key frame extraction, reuse that
+                            if key_frame_extraction & (
+                                key_frame_extraction_algorithm == key_frame_extraction_algorithms[0]
+                            ):
+                                vid_total = background_subtracted_key_frames
+                            else:
+                                vid_total = perform_background_subtraction(vid_total)
+                        # print("{} - {}".format(adl_name, len(vid_total)))
+
                     x_data_adl.append(vid_total)
                     x_info_adl.append(adl_name)  # [7:]
-                    labels_total = data_dict[adl_name]["Labels"][:]
                     y_data_adl.append(labels_total)
+                    # print("{} - {}, {} ".format(adl_name, len(vid_total), len(labels_total)))
                 except:
                     print("Skipped", adl_name)
 
-                # Exit after 5 fall directories (For dev and debugging)
+                # Exit after 5 adl directories (For dev and debugging)
                 # if len(x_data_adl) == 5:
                 #     break
+
+            # Data Augmentation for ADL (Training Set for Autoencoder Model's)
+            if data_augmentation:
+                for adl_name in folders_to_be_augmented:
+                    adl_name = "NonFall" + adl_name
+                    try:
+                        vid_total = data_dict[adl_name]["Data"][:]
+                        labels_total = data_dict[adl_name]["Labels"][:]
+                        # print("{} - {}, {} ".format(adl_name, len(vid_total), len(labels_total)))
+                        if len(vid_total) < 10:
+                            continue
+
+                        # Augment before key frame and feature extraction.
+                        vid_total = augment_images(vid_total)
+
+                        if key_frame_extraction:
+                            # For Both Autoencoders and CNNs.
+                            # Key frames from original video, background subtracted key frames, corresponding labels
+                            vid_total, background_subtracted_key_frames, labels_total = key_frame_extractor(
+                                vid_total, labels_total, modality=name
+                            )
+                            total_non_fall_frames_from_adl = total_non_fall_frames_from_adl + len(labels_total)
+                            # print("{} - {}, {} ".format(Fall_name, len(vid_total), len(labels_total)))
+
+                        if feature_extraction:
+                            if background_subtraction:
+                                # If background subtraction algorithm was already used for key frame extraction, reuse that
+                                if key_frame_extraction & (
+                                    key_frame_extraction_algorithm == key_frame_extraction_algorithms[0]
+                                ):
+                                    vid_total = background_subtracted_key_frames
+                                else:
+                                    vid_total = perform_background_subtraction(vid_total)
+                            # print("{} - {}".format(adl_name, len(vid_total)))
+
+                        x_data_adl.append(vid_total)
+                        x_info_adl.append(adl_name)  # [7:]
+                        y_data_adl.append(labels_total)
+                        # print("{} - {}, {} ".format(adl_name, len(vid_total), len(labels_total)))
+                    except:
+                        print("Skipped", adl_name)
+
+                    # Exit after 5 adl directories (For dev and debugging)
+                    # if len(x_data_adl) == 5:
+                    #     break
 
         """ 
         # get matching day/night label from falls
@@ -579,10 +682,44 @@ def create_multimodal_pytorch_dataset(names, dsets, paths, window_len, fair_comp
 
     # X_modality_list, y_modality_list = re_arrange_data(x_data_adls, y_data_adls)
 
-    Test_Dataset = Multi_Dataset(y_data_falls, x_data_falls, window=window_len)
-    test_dataloader = data.DataLoader(Test_Dataset, batch_size)
+    if anomaly_detection_model:
+        Test_Dataset = Multi_Dataset(y_data_falls, x_data_falls, window=window_len)
+        test_dataloader = data.DataLoader(Test_Dataset, batch_size)
 
-    Train_Dataset = Multi_Dataset(y_data_adls, x_data_adls, window=window_len)
-    train_dataloader = data.DataLoader(Train_Dataset, batch_size)
+        Train_Dataset = Multi_Dataset(y_data_adls, x_data_adls, window=window_len)
+        train_dataloader = data.DataLoader(Train_Dataset, batch_size)
 
-    return (Test_Dataset, test_dataloader, Train_Dataset, train_dataloader)
+        return (Test_Dataset, test_dataloader, Train_Dataset, train_dataloader)
+    else:
+        # Data
+        combined_x_data_modality0 = x_data_falls[0] + x_data_adls[0]
+        combined_x_data_modality1 = x_data_falls[1] + x_data_adls[1]
+        # Labels
+        combined_y_data_modality0 = y_data_falls[0] + y_data_adls[0]
+        combined_y_data_modality1 = y_data_falls[1] + y_data_adls[1]
+
+        x_data_train_modality0, x_data_test_modality0, y_data_train_modality0, y_data_test_modality0 = (
+            train_test_split(
+                combined_x_data_modality0, combined_y_data_modality0, test_size=test_size, random_state=42
+            )
+        )  # Parameters - Data, Labels, Split Ratio, Random Seed
+
+        x_data_train_modality1, x_data_test_modality1, y_data_train_modality1, y_data_test_modality1 = (
+            train_test_split(
+                combined_x_data_modality1, combined_y_data_modality1, test_size=test_size, random_state=42
+            )
+        )  # Parameters - Data, Labels, Split Ratio, Random Seed
+
+        x_data_train = [x_data_train_modality0, x_data_train_modality1]
+        x_data_test = [x_data_test_modality0, x_data_test_modality1]
+        y_data_train = [y_data_train_modality0, y_data_train_modality1]
+        y_data_test = [y_data_test_modality0, y_data_test_modality1]
+
+        # Create separate datasets and dataloaders for training and testing
+        Test_Dataset = Multi_Dataset(y_data_test, x_data_test, window=window_len)
+        test_dataloader = data.DataLoader(Test_Dataset, batch_size)
+
+        Train_Dataset = Multi_Dataset(y_data_train, x_data_train, window=window_len)
+        train_dataloader = data.DataLoader(Train_Dataset, batch_size)
+
+        return (Test_Dataset, test_dataloader, Train_Dataset, train_dataloader)

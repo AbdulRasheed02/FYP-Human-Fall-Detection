@@ -18,9 +18,11 @@ ONI_IR Trials -
 5 : Default GMG with MSEloss(), FPS Adjusted Dataset
 6 : BG Subtraction, Default GMG with L1loss(), FPS Adjusted Dataset
 7 : Optical Flow, Default GMG with L1loss(), FPS Adjusted Dataset
+8 : Default GMG with L1loss(), FPS Adjusted Dataset
 
-Current Optimal - 4 : Default GMG with L1loss(), FPS Adjusted Dataset
-
+Current Optimal - 8 : Default GMG with L1loss(), FPS Adjusted Dataset
+                  4 : Default GMG with L1loss(), FPS Adjusted Dataset
+                  
 Thermal Trials -
 1,2 : Baseline
 3 : Fair Comparision = False
