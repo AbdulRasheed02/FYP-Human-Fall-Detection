@@ -29,8 +29,9 @@ Output - a. Video folders common across all modalities for fall and adl
 File - Code\Data_Augmentation\augmenter.py
 
 5. Key Frame Extraction
-    a. Using Background Subtraction (File - Code\Feature_Extraction\background_subtraction.py)
-    b. Using Optical Flow (File - Code\Feature_Extraction\optical_flow.py)
+    a. Fall Frame Extraction (By using Labels)
+    b. Using Background Subtraction (File - Code\Feature_Extraction\background_subtraction.py)
+    c. Using Optical Flow (File - Code\Feature_Extraction\optical_flow.py)
 
 File - Code\Frame_Utility\frame_utility.py
 
