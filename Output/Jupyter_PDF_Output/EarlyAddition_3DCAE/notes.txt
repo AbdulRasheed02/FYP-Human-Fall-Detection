@@ -1,0 +1,6 @@
+Thermal, IP Trials -
+1: FPS Adjusted, MSELoss, Pad Minimum
+
+Current Optimal Model - 1 
+
+Thermal, ONI_IR Trials - 

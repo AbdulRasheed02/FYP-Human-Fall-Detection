@@ -5,6 +5,12 @@ from Models.Base_3DCAE import Base_3DCAE
 from Models.Base_3DCAE_2 import Base_3DCAE_2
 from Models.CNN_3D import CNN_3D
 from Models.MultiModal_3DCAE import MultiModal_3DCAE
+from Models.EarlyConcatenation_3DCAE import EarlyConcatenation_3DCAE
+from Models.EarlyAddition_3DCAE import EarlyAddition_3DCAE
+from Models.EarlySubtraction_3DCAE import EarlySubtraction_3DCAE
+from Models.LateConcatenation_3DCAE import LateConcatenation_3DCAE
+from Models.LateAddition_3DCAE import LateAddition_3DCAE
+from Models.LateSubtraction_3DCAE import LateSubtraction_3DCAE
 
 script_directory = os.path.dirname(__file__)
 project_directory = os.path.dirname(script_directory)  # Base Folder - FallDetection
@@ -22,7 +28,7 @@ fair_comparison = True  # For using common fall and non fall folders of all moda
 metadata_set = 1  # 1 is Generated Locally, 2 is Downloaded from MUVIM Repo. Always use 1 for multi modality
 TOD = "Both"  # Time of Day
 
-frame_rate_adjusted_dataset = False  # Use dataset adjusted to 8 fps
+frame_rate_adjusted_dataset = True  # Use dataset adjusted to 8 fps
 if frame_rate_adjusted_dataset:
     dataset_category = "FPS-Adjusted"
 else:
@@ -81,7 +87,15 @@ w1 = 1
 w2 = 0.00001
 
 # Multi-modal parameters
-multi_modal_models = [MultiModal_3DCAE]
+multi_modal_models = [
+    MultiModal_3DCAE,
+    EarlyConcatenation_3DCAE,
+    EarlyAddition_3DCAE,
+    EarlySubtraction_3DCAE,
+    LateConcatenation_3DCAE,
+    LateAddition_3DCAE,
+    LateSubtraction_3DCAE,
+]
 multi_modal_model = multi_modal_models[0]
 # If true : For a specific video across all the modalities, the video will be padded to match the modality with the maximum length video
 # If false : For a specific video across all the modalities, the video will be trimmed to match the modality with the minimum length video
