@@ -41,7 +41,15 @@ File - Code\Frame_Utility\frame_utility.py
         ii. MOG2
         iii. MOG
 
-7. Deep Learning Model
+7. Video Synchronisation (For Multimodality)
+    a. Fall Length and Interval synchronisation (Single and Double Fall)
+    b. Pre-Fall and Post-Fall Length and Interval synchronisation
+
+File - Code\Frame_Utility\frame_utility.py
+Input - Video trial, label from two modalities
+Output - Length and Interval synchronised Pre-Fall, Fall and Post-Fall frames, label across the two modalities
+
+8. Deep Learning Model
     a. Unimodal
         i. Base_3DCAE (File - Code\Models\Base_3DCAE.py )
         ii. Base_3DCAE_2 (File - Code\Models\Base_3DCAE_2.py)
@@ -49,6 +57,6 @@ File - Code\Frame_Utility\frame_utility.py
     b. Multimodal  
         i. MultiModal_3DCAE (File - Code\Models\MultiModal_3DCAE.py)
 
-8. Spatial Temporal Loss
+9. Spatial Temporal Loss
 
 File - Code\Custom_Loss\spatial_temporal_loss.py

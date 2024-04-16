@@ -97,8 +97,16 @@ multi_modal_models = [
     LateSubtraction_3DCAE,
 ]
 multi_modal_model = multi_modal_models[0]
+"""
+If true : For a video across both the modalities - fall frames will be adjusted to equal length and same period, 
+frames before and after the fall will be adjusted to equal length and same period. 
+Overall video length will be uniform. Eliminates use of pad/trim.
+If false : Pad/trim flag will be used,
+"""
+synchronise_video = True
 # If true : For a specific video across all the modalities, the video will be padded to match the modality with the maximum length video
 # If false : For a specific video across all the modalities, the video will be trimmed to match the modality with the minimum length video
+# Not applicable if synchronise_video is set to true
 pad_video = True
 
 """
@@ -120,12 +128,12 @@ elif preset == 2:
     model = models[2]
     loss_fn = loss_fns[0]
     key_frame_extraction = True
-    # Set Feature Extraction, Augmentation etc..
+    # Set Feature Extraction, Augmentation, Key Frame Extraction Algorithm etc..
 elif preset == 3:
     anomaly_detection_model = True
-    multi_modal_model = multi_modal_models[0]
+    multi_modal_model = multi_modal_models[0]  # Index 0 to 6
     frame_rate_adjusted_dataset = True
     dataset_category = "FPS-Adjusted"
     fair_comparison = True
     metadata_set = 1
-    # Set Feature Extraction, Augmentation, Loss Function, Pad Mode etc..
+    # Set Feature Extraction, Augmentation, Loss Function, Synchronise Video, Pad Mode etc..

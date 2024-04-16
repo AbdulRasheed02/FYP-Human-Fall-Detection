@@ -17,6 +17,7 @@ from parameters import (
     anomaly_detection_model,
     test_size,
     metadata_set,
+    synchronise_video,
     pad_video,
     key_frame_extraction,
     key_frame_extraction_algorithm,
@@ -25,7 +26,7 @@ from parameters import (
     folders_to_be_augmented,
 )
 from Feature_Extraction.background_subtractor import perform_background_subtraction
-from Frame_Utility.frame_utility import fall_frame_extractor, key_frame_extractor
+from Frame_Utility.frame_utility import fall_frame_extractor, key_frame_extractor, sync_frames
 from sklearn.model_selection import train_test_split
 from Data_Augmentation.augmenter import augment_images
 
@@ -612,35 +613,47 @@ def create_multimodal_pytorch_dataset(names, dsets, paths, window_len, fair_comp
             X_modality_list = []  # Data (all modality)
             y_modality_list = []  # Labels (all modality)
 
-            # Find the maximum and minimum number of frames across all modalities for this video
-            max_length = 0
-            min_length = sys.maxsize
-            # For each modality
-            for k in range(len(x_data)):
-                if len(x_data[k][vid]) > max_length:
-                    max_length = len(x_data[k][vid])
-                if len(x_data[k][vid]) < min_length:
-                    min_length = len(x_data[k][vid])
-
             # print(len(x_data[0][vid]), len(x_data[1][vid]))
 
-            if pad_video:
-                # For each modality, The video will be padded to match the modality with the maximum length video
-                for k in range(len(x_data)):
-                    if len(x_data[k][vid]) < max_length:
-                        length_to_be_concatenated = max_length - len(x_data[k][vid])
-                        # Repeat the last frame and the last frame's label for the calculated amount of times
-                        repeated_last_frame = np.repeat([x_data[k][vid][-1]], length_to_be_concatenated, axis=0)
-                        repeated_last_frame_label = np.repeat([y_data[k][vid][-1]], length_to_be_concatenated, axis=0)
-                        # Concatenate the repeated arrays to match maximum video length
-                        x_data[k][vid] = np.concatenate((x_data[k][vid], repeated_last_frame), axis=0)
-                        y_data[k][vid] = np.concatenate((y_data[k][vid], repeated_last_frame_label), axis=0)
+            if synchronise_video:
+                # Gets called only during the first epoch. Not required in subsequent epochs as Video would already have been made syncrhonised.
+                if len(y_data[0][vid]) != len(y_data[1][vid]):
+                    x_data[0][vid], x_data[1][vid], y_data[0][vid], y_data[1][vid] = sync_frames(
+                        x_data[0][vid], x_data[1][vid], y_data[0][vid], y_data[1][vid]
+                    )
+                    # Labels of both modality must be equal.
+                    # print("Equal Labels -", np.array_equal(y_data[0][vid], y_data[1][vid]))
+
             else:
-                # For each modality, The video will be trimmed to match the modality with the minimum length video
+                # Find the maximum and minimum number of frames across all modalities for this video
+                max_length = 0
+                min_length = sys.maxsize
+                # For each modality
                 for k in range(len(x_data)):
-                    if len(x_data[k][vid]) > min_length:
-                        x_data[k][vid] = x_data[k][vid][:min_length]
-                        y_data[k][vid] = y_data[k][vid][:min_length]
+                    if len(x_data[k][vid]) > max_length:
+                        max_length = len(x_data[k][vid])
+                    if len(x_data[k][vid]) < min_length:
+                        min_length = len(x_data[k][vid])
+
+                if pad_video:
+                    # For each modality, The video will be padded to match the modality with the maximum length video
+                    for k in range(len(x_data)):
+                        if len(x_data[k][vid]) < max_length:
+                            length_to_be_concatenated = max_length - len(x_data[k][vid])
+                            # Repeat the last frame and the last frame's label for the calculated amount of times
+                            repeated_last_frame = np.repeat([x_data[k][vid][-1]], length_to_be_concatenated, axis=0)
+                            repeated_last_frame_label = np.repeat(
+                                [y_data[k][vid][-1]], length_to_be_concatenated, axis=0
+                            )
+                            # Concatenate the repeated arrays to match maximum video length
+                            x_data[k][vid] = np.concatenate((x_data[k][vid], repeated_last_frame), axis=0)
+                            y_data[k][vid] = np.concatenate((y_data[k][vid], repeated_last_frame_label), axis=0)
+                else:
+                    # For each modality, The video will be trimmed to match the modality with the minimum length video
+                    for k in range(len(x_data)):
+                        if len(x_data[k][vid]) > min_length:
+                            x_data[k][vid] = x_data[k][vid][:min_length]
+                            y_data[k][vid] = y_data[k][vid][:min_length]
 
             # print(len(x_data[0][vid]), len(x_data[1][vid]))
 
