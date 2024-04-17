@@ -3,20 +3,26 @@ Thermal, IP Trials -
 2 : Baseline - MSE Loss, Trim {To Do}
 3 : Baseline - MSE Loss, Pad {To Do}
 
-Current Optimal Model - 1 : Baseline - MSE Loss, Trim, metadata_set = 2
+Current Optimal Model - 1 
 
 Thermal, ONI_IR Trials -
 1 : Baseline - MSE Loss, Trim, metadata_set = 2
 2 : Baseline - MSE Loss, Trim {To Do}
 3 : Baseline - MSE Loss, Pad {To Do}
 4 : FPS Adjusted, MSE Loss, Synchronise Video
-5 : FPS Adjusted, L1 Loss, Synchronise Video {To Do}
+5 : FPS Adjusted, L1 Loss, Synchronise Video
 6 : FPS Adjusted, Default GMG, L1 Loss, Trim
 7 : FPS Adjusted, Default GMG, L1 Loss, Pad
 8 : FPS Adjusted, Default GMG, L1 Loss, Synchronise Video
 9 : FPS Adjusted, Default GMG, MSE Loss, Synchronise Video
+10 : FPS Adjusted, Default GMG, MSE Loss, Synchronise Video
+11 : FPS Adjusted, Default GMG, MSE Loss, Synchronise Video
+12 : FPS Adjusted, Default GMG, Smooth L1 Loss, Synchronise Video
+13 : FPS Adjusted, Default GMG, Smooth L1 Loss, Synchronise Video
+14 : FPS Adjusted, Default GMG, Huber Loss, Synchronise Video
 
-Current Optimal Model - 9 : FPS Adjusted, Default GMG, MSE Loss, Synchronise Video
+Current Optimal Model - 12
+                        14
 
 # Just a test
 Thermal, Thermal Trial -

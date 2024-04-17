@@ -56,6 +56,12 @@ Output - Length and Interval synchronised Pre-Fall, Fall and Post-Fall frames, l
         iii. CNN_3D (File - Code\Models\CNN_3D.py)
     b. Multimodal  
         i. MultiModal_3DCAE (File - Code\Models\MultiModal_3DCAE.py)
+        ii. EarlyAddition_3DCAE (File - Code\Models\EarlyAddition_3DCAE.py)
+        iii. EarlyConcatenation_3DCAE (File - Code\Models\EarlyConcatenation_3DCAE.py)
+        iv. EarlySubtraction_3DCAE (File - Code\Models\EarlySubtraction_3DCAE.py)
+        v. LateAddition_3DCAE (File - Code\Models\LateAddition_3DCAE.py)
+        vi. LateConcatenation_3DCAE (File - Code\Models\LateConcatenation_3DCAE.py)
+        vii. LateSubtraction_3DCAE (File - Code\Models\LateSubtraction_3DCAE.py)
 
 9. Spatial Temporal Loss
 
