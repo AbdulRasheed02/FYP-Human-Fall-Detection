@@ -3,4 +3,9 @@ Thermal, IP Trials -
 
 Current Optimal Model - 1 
 
-Thermal, ONI_IR Trials - 
+Thermal, ONI_IR Trials -
+1: Baseline - FPS Adjusted, MSE Loss, Pad {To Do}
+2: FPS Adjusted, Default GMG, Smooth L1 Loss, Synchronise Video {To Do}
+
+Current Optimal Model -
+ 

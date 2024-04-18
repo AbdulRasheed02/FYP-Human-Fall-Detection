@@ -1,28 +1,38 @@
 Thermal, IP Trials -
 1 : Baseline - MSE Loss, Trim, metadata_set = 2
-2 : Baseline - MSE Loss, Trim {To Do}
-3 : Baseline - MSE Loss, Pad {To Do}
+2 : Baseline - MSE Loss, Trim (Error as all falls got trimmed from IP)
+    Baseline - MSE Loss, Pad (Memory Error as Too many frames per video, No PDF)
+3 : Baseline - FPS Adjusted, MSE Loss, Pad
+4 : FPS Adjusted, Default GMG, MSE Loss, Pad
+5 : FPS Adjusted, Default GMG, MSE Loss, Synchronise Video
+6 : FPS Adjusted, Default GMG, L1 Loss, Synchronise Video 
+7 : FPS Adjusted, Default GMG, Smooth L1 Loss, Synchronise Video
+8 : FPS Adjusted, Default GMG, Huber Loss, Synchronise Video
+9 : FPS Adjusted, Default GMG, Smooth L1 Loss + Custom Loss, Synchronise Video
 
-Current Optimal Model - 1 
+Current Optimal Model - 9 / 7
 
 Thermal, ONI_IR Trials -
 1 : Baseline - MSE Loss, Trim, metadata_set = 2
-2 : Baseline - MSE Loss, Trim {To Do}
-3 : Baseline - MSE Loss, Pad {To Do}
-4 : FPS Adjusted, MSE Loss, Synchronise Video
-5 : FPS Adjusted, L1 Loss, Synchronise Video
-6 : FPS Adjusted, Default GMG, L1 Loss, Trim
-7 : FPS Adjusted, Default GMG, L1 Loss, Pad
-8 : FPS Adjusted, Default GMG, L1 Loss, Synchronise Video
-9 : FPS Adjusted, Default GMG, MSE Loss, Synchronise Video
+2 : Baseline - MSE Loss, Trim (Error as all falls got trimmed from ONI_IR)
+    Baseline - MSE Loss, Pad (Memory Error as Too many frames per video, No PDF)
+3 : Baseline - FPS Adjusted, MSE Loss, Pad
+4 : MSE Loss, Synchronise Video
+5 : FPS Adjusted, MSE Loss, Synchronise Video
+6 : FPS Adjusted, L1 Loss, Synchronise Video
+7 : FPS Adjusted, Default GMG, L1 Loss, Trim
+8 : FPS Adjusted, Default GMG, L1 Loss, Pad
+9 : FPS Adjusted, Default GMG, L1 Loss, Synchronise Video
 10 : FPS Adjusted, Default GMG, MSE Loss, Synchronise Video
 11 : FPS Adjusted, Default GMG, MSE Loss, Synchronise Video
-12 : FPS Adjusted, Default GMG, Smooth L1 Loss, Synchronise Video
+12 : FPS Adjusted, Default GMG, MSE Loss, Synchronise Video
 13 : FPS Adjusted, Default GMG, Smooth L1 Loss, Synchronise Video
-14 : FPS Adjusted, Default GMG, Huber Loss, Synchronise Video
+14 : FPS Adjusted, Default GMG, Smooth L1 Loss, Synchronise Video
+15 : FPS Adjusted, Default GMG, Huber Loss, Synchronise Video
+16 : FPS Adjusted, Default GMG, Smooth L1 Loss + Custom Loss, Synchronise Video
 
-Current Optimal Model - 12
-                        14
+Current Optimal Model - 13
+                        15 
 
 # Just a test
 Thermal, Thermal Trial -
