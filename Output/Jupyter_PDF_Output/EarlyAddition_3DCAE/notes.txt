@@ -2,11 +2,16 @@ Thermal, IP Trials -
 1: FPS Adjusted, MSELoss, Pad Minimum
 2: FPS Adjusted, MSELoss, Synchronise Video, BG Subtraction - GMG
 3: FPS Adjusted, Smooth L1 Loss, Synchronise Video, BG Subtraction - GMG (Early Fusion Architecture Change)
+4: FPS Adjusted, Smooth L1 Loss, Synchronise Video, BG Subtraction - GMG
+5: FPS Adjusted, Smooth L1 Loss, Synchronise Video, BG Subtraction - GMG
+6: FPS Adjusted, MSE Loss, Synchronise Video, BG Subtraction - GMG
+7: FPS Adjusted, L1 Loss, Synchronise Video, BG Subtraction - GMG
 
-Current Optimal Model - 3
+Current Optimal Model - 3 / 7
 
 Thermal, ONI_IR Trials - 
 1: Baseline - FPS Adjusted, MSE Loss, Pad {To Do}
-2: FPS Adjusted, Default GMG, Smooth L1 Loss, Synchronise Video {To Do}
+2: FPS Adjusted, Default GMG, Smooth L1 Loss, Synchronise Video
+3: FPS Adjusted, Default GMG, Smooth L1 Loss, Synchronise Video (Early Fusion Architecture Change) {To Do}
 
 Current Optimal Model -

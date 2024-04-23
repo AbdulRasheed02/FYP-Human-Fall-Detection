@@ -75,6 +75,6 @@ class EarlyConcatenation_3DCAE(nn.Module):
 
         # final inverse
         re_x1 = torch.tanh(self.dc4(_dm3))
-        re_x2 = torch.tanh(self.dc4(_dm3))
+        re_x2 = torch.tanh(self.dc4(_dm3))  # Dummy output (not used elsewhere)
 
         return re_x1, re_x2

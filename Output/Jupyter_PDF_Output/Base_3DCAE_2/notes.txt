@@ -8,9 +8,9 @@ Current Optimal - 1 : Baseline
 ONI_IR Trials -
 1 : Baseline 
 2 : Default GMG, L1loss() {To Do}
-2 : Default GMG, L1loss(), Spatial Temporal Loss {To Do}
+3 : Default GMG, L1loss(), Spatial Temporal Loss
 
-Current Optimal - 1 : Baseline 
+Current Optimal - 3 : Default GMG, L1loss(), Spatial Temporal Loss
 
 Thermal Trials -
 1 : Baseline

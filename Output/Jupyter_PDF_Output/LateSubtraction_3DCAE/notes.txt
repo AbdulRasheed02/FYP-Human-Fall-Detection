@@ -2,6 +2,7 @@ Thermal, IP Trials -
 1: FPS Adjusted, MSELoss, Pad Minimum
 2: FPS Adjusted, MSELoss, Pad Minimum, BG Subtraction - GMG
 3: FPS Adjusted, MSELoss, Synchronise Video, BG Subtraction - GMG
+4: FPS Adjusted, Smooth L1 Loss, Synchronise Video, BG Subtraction - GMG {To Do}
 
 Current Optimal Model - 3
 

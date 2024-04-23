@@ -89,14 +89,22 @@ w2 = 0.00001
 # Multi-modal parameters
 multi_modal_models = [
     MultiModal_3DCAE,
-    EarlyConcatenation_3DCAE,
     EarlyAddition_3DCAE,
+    EarlyConcatenation_3DCAE,
     EarlySubtraction_3DCAE,
-    LateConcatenation_3DCAE,
     LateAddition_3DCAE,
+    LateConcatenation_3DCAE,
     LateSubtraction_3DCAE,
 ]
 multi_modal_model = multi_modal_models[0]
+
+if (multi_modal_models.index(multi_modal_model) > 0) & (multi_modal_models.index(multi_modal_model) < 4):
+    # Early Fusion
+    fusion_type = 0
+else:
+    # Late Fusion
+    fusion_type = 1
+
 """
 If true : For a video across both the modalities - fall frames will be adjusted to equal length and same period, 
 frames before and after the fall will be adjusted to equal length and same period. 
@@ -132,6 +140,10 @@ elif preset == 2:
 elif preset == 3:
     anomaly_detection_model = True
     multi_modal_model = multi_modal_models[0]  # Index 0 to 6
+    if (multi_modal_models.index(multi_modal_model) > 0) & (multi_modal_models.index(multi_modal_model) < 4):
+        fusion_type = 0
+    else:
+        fusion_type = 1
     frame_rate_adjusted_dataset = True
     dataset_category = "FPS-Adjusted"
     fair_comparison = True
