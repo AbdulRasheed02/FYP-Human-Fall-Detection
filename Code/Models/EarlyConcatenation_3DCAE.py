@@ -39,7 +39,7 @@ class EarlyConcatenation_3DCAE(nn.Module):
         self.dm3 = nn.MaxUnpool3d((1, 2, 2))
 
         # final inverse
-        self.dc4 = nn.ConvTranspose3d(16, 1, (5, 3, 3), stride=1, padding=(2, 1, 1))
+        self.dc4 = nn.ConvTranspose3d(16, 2, (5, 3, 3), stride=1, padding=(2, 1, 1))
 
     def forward(self, x1, x2):
         # *** start of encoder
