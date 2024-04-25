@@ -28,7 +28,7 @@ fair_comparison = True  # For using common fall and non fall folders of all moda
 metadata_set = 1  # 1 is Generated Locally, 2 is Downloaded from MUVIM Repo. Always use 1 for multi modality
 TOD = "Both"  # Time of Day
 
-frame_rate_adjusted_dataset = True  # Use dataset adjusted to 8 fps
+frame_rate_adjusted_dataset = False  # Use dataset adjusted to 8 fps
 if frame_rate_adjusted_dataset:
     dataset_category = "FPS-Adjusted"
 else:
@@ -149,3 +149,11 @@ elif preset == 3:
     fair_comparison = True
     metadata_set = 1
     # Set Feature Extraction, Augmentation, Loss Function, Synchronise Video, Pad Mode etc..
+
+"""
+For Live Demo :
+For single_modality_demo.ipynb - Set preset 0 with model = models[0], background_subtraction = True / False
+For multi_modality_demo.ipynb - Set preset 3 with multi_modal_model = multi_modal_models[0], synchronise_video = True, background_subtraction = True / False
+"""
+demo = False
+demo_length = 2  # No. of test videos

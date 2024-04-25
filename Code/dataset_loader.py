@@ -24,6 +24,8 @@ from parameters import (
     key_frame_extraction_algorithms,
     data_augmentation,
     folders_to_be_augmented,
+    demo,
+    demo_length,
 )
 from Feature_Extraction.background_subtractor import perform_background_subtraction
 from Frame_Utility.frame_utility import fall_frame_extractor, key_frame_extractor, sync_frames
@@ -157,6 +159,10 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
             # if len(x_data_fall) == 5:
             #     break
 
+            # Exit after 5 fall directories (For Demo)
+            if demo & (len(x_data_fall) == demo_length):
+                break
+
         for adl_name in adl:
             try:
                 vid_total = data_dict[adl_name]["Data"][:]
@@ -195,6 +201,10 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
             # Exit after 5 adl directories (For dev and debugging)
             # if len(x_data_adl) == 5:
             #     break
+
+            # Exit after 5 fall directories (For Demo)
+            if demo & (len(x_data_adl) == demo_length):
+                break
 
         # Data Augmentation for ADL (Training Set for Autoencoder Model's)
         if data_augmentation:
@@ -240,6 +250,10 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
                 # Exit after 5 adl directories (For dev and debugging)
                 # if len(x_data_adl) == 5:
                 #     break
+
+                # Exit after 5 fall directories (For Demo)
+                if demo & (len(x_data_adl) == demo_length):
+                    break
 
     # pdb.set_trace()
     # %%    temp_df = my_data.loc[my_data["Video"] == int(fall), "ToD"]
@@ -299,14 +313,18 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
         Train_Dataset = Dataset(y_data_adl, x_data_adl, window=window_len)
         train_dataloader = data.DataLoader(Train_Dataset, batch_size)
 
+        if demo:
+            return (Test_Dataset, test_dataloader, x_data_fall, y_data_fall, x_info_fall)
+
         return (Test_Dataset, test_dataloader, Train_Dataset, train_dataloader)
     else:
         # Combine Fall and ADL arrays
         combined_x_data = x_data_fall + x_data_adl  # Data
         combined_y_data = y_data_fall + y_data_adl  # Labels
+        combined_x_info = x_info_fall + x_info_adl  # Folder Name
 
-        x_data_train, x_data_test, y_data_train, y_data_test = train_test_split(
-            combined_x_data, combined_y_data, test_size=test_size, random_state=42
+        x_data_train, x_data_test, y_data_train, y_data_test, x_info_train, x_info_test = train_test_split(
+            combined_x_data, combined_y_data, combined_x_info, test_size=test_size, random_state=42
         )  # Parameters - Data, Labels, Split Ratio, Random Seed
 
         # Create separate datasets and dataloaders for training and testing
@@ -315,6 +333,9 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
 
         Train_Dataset = Dataset(y_data_train, x_data_train, window=window_len)
         train_dataloader = data.DataLoader(Train_Dataset, batch_size)
+
+        if demo:
+            return (Test_Dataset, test_dataloader, x_data_test, y_data_test, x_info_test)
 
         return (Test_Dataset, test_dataloader, Train_Dataset, train_dataloader)
 
@@ -426,6 +447,10 @@ def create_multimodal_pytorch_dataset(names, dsets, paths, window_len, fair_comp
                 # if len(x_data_fall) == 5:
                 #     break
 
+                # Exit after 5 fall directories (For Demo)
+                if demo & (len(x_data_fall) == demo_length):
+                    break
+
             for adl_name in adl:
                 try:
                     vid_total = data_dict[adl_name]["Data"][:]
@@ -464,6 +489,10 @@ def create_multimodal_pytorch_dataset(names, dsets, paths, window_len, fair_comp
                 # Exit after 5 adl directories (For dev and debugging)
                 # if len(x_data_adl) == 5:
                 #     break
+
+                # Exit after 5 fall directories (For Demo)
+                if demo & (len(x_data_adl) == demo_length):
+                    break
 
             # Data Augmentation for ADL (Training Set for Autoencoder Model's)
             if data_augmentation:
@@ -510,6 +539,10 @@ def create_multimodal_pytorch_dataset(names, dsets, paths, window_len, fair_comp
                     # if len(x_data_adl) == 5:
                     #     break
 
+                    # Exit after 5 fall directories (For Demo)
+                    if demo & (len(x_data_adl) == demo_length):
+                        break
+
         """ 
         # get matching day/night label from falls
         labels_dir = "D:/{}/".format(dset) + "Labels.csv"
@@ -519,7 +552,7 @@ def create_multimodal_pytorch_dataset(names, dsets, paths, window_len, fair_comp
         my_data.drop_duplicates(subset="Video", keep="first", inplace=True)
         print(my_data.head())
         """
-        return (y_data_fall, x_data_fall, x_data_adl, y_data_adl)
+        return (x_data_fall, y_data_fall, x_info_fall, x_data_adl, y_data_adl, x_info_adl)
 
     # ----------------------------------------------------------------------------
     # *** PREPARING DATASET LOADER ***
@@ -527,25 +560,37 @@ def create_multimodal_pytorch_dataset(names, dsets, paths, window_len, fair_comp
 
     # 1) Need a ADL loader and a Fall Loader
 
-    y_data_falls = []
-    x_data_falls = []
-    y_data_adls = []
-    x_data_adls = []
+    multi_x_data_fall = []
+    multi_y_data_fall = []
+    multi_x_info_fall = []
+
+    multi_x_data_adl = []
+    multi_y_data_adl = []
+    multi_x_info_adl = []
 
     for i in range(len(dsets)):
         path = paths[i]
         print("Modality {} - {}".format(i + 1, dsets[i]))
-        y_data_fall, x_data_fall, x_data_adl, y_data_adl = load_data(names[i], dsets[i], path, fair_compairson)
+        x_data_fall, y_data_fall, x_info_fall, x_data_adl, y_data_adl, x_info_adl = load_data(
+            names[i], dsets[i], path, fair_compairson
+        )
         # print(len(y_data_fall), len(x_data_fall), len(y_data_adl), len(x_data_adl))
         print("Non Falls - {}, Falls - {}\n".format(len(x_data_adl), len(x_data_fall)))
-        y_data_falls.append(y_data_fall)
-        x_data_falls.append(x_data_fall)
-        y_data_adls.append(y_data_adl)
-        x_data_adls.append(x_data_adl)
-        del y_data_fall
+        multi_x_data_fall.append(x_data_fall)
+        multi_y_data_fall.append(y_data_fall)
+        multi_x_info_fall.append(x_info_fall)
+
+        multi_x_data_adl.append(x_data_adl)
+        multi_y_data_adl.append(y_data_adl)
+        multi_x_info_adl.append(x_info_adl)
+
         del x_data_fall
-        del y_data_adl
+        del y_data_fall
+        del x_info_fall
+
         del x_data_adl
+        del y_data_adl
+        del x_info_adl
 
     """' 
     def re_arrange_data(x_data, y_data):
@@ -615,14 +660,27 @@ def create_multimodal_pytorch_dataset(names, dsets, paths, window_len, fair_comp
 
             # print(len(x_data[0][vid]), len(x_data[1][vid]))
 
+            # Empty list
+            original_indices_modality_list = [[], []]
+
             if synchronise_video:
                 # Gets called only during the first epoch. Not required in subsequent epochs as Video would already have been made syncrhonised.
                 if len(y_data[0][vid]) != len(y_data[1][vid]):
-                    x_data[0][vid], x_data[1][vid], y_data[0][vid], y_data[1][vid] = sync_frames(
-                        x_data[0][vid], x_data[1][vid], y_data[0][vid], y_data[1][vid]
-                    )
+                    (
+                        x_data[0][vid],
+                        x_data[1][vid],
+                        y_data[0][vid],
+                        y_data[1][vid],
+                        original_indices_modality_list[0],
+                        original_indices_modality_list[1],
+                    ) = sync_frames(x_data[0][vid], x_data[1][vid], y_data[0][vid], y_data[1][vid])
                     # Labels of both modality must be equal.
                     # print("Equal Labels -", np.array_equal(y_data[0][vid], y_data[1][vid]))
+                    # Length of original indices of of both modality must be equal.
+                    # print(
+                    #     "Equal Original Indices -",
+                    #     np.equal(len(original_indices_modality_list[0]), len(original_indices_modality_list[1])),
+                    # )
 
             else:
                 # Find the maximum and minimum number of frames across all modalities for this video
@@ -680,6 +738,8 @@ def create_multimodal_pytorch_dataset(names, dsets, paths, window_len, fair_comp
             # ex - (2, 819, 8, 64, 64)
             # y should be (modalities, # of windows w/in video, window-length) array
             # ex - (2, 819, 8)
+            if demo:
+                return (X, y, np.squeeze(np.stack(original_indices_modality_list)))
             return (X, y)
             """
             mod_vid = [] 
@@ -700,43 +760,72 @@ def create_multimodal_pytorch_dataset(names, dsets, paths, window_len, fair_comp
     # X_modality_list, y_modality_list = re_arrange_data(x_data_adls, y_data_adls)
 
     if anomaly_detection_model:
-        Test_Dataset = Multi_Dataset(y_data_falls, x_data_falls, window=window_len)
+        Test_Dataset = Multi_Dataset(multi_y_data_fall, multi_x_data_fall, window=window_len)
         test_dataloader = data.DataLoader(Test_Dataset, batch_size)
 
-        Train_Dataset = Multi_Dataset(y_data_adls, x_data_adls, window=window_len)
+        Train_Dataset = Multi_Dataset(multi_y_data_adl, multi_x_data_adl, window=window_len)
         train_dataloader = data.DataLoader(Train_Dataset, batch_size)
+
+        if demo:
+            return (Test_Dataset, test_dataloader, multi_x_data_fall, multi_y_data_fall, multi_x_info_fall)
 
         return (Test_Dataset, test_dataloader, Train_Dataset, train_dataloader)
     else:
         # Data
-        combined_x_data_modality0 = x_data_falls[0] + x_data_adls[0]
-        combined_x_data_modality1 = x_data_falls[1] + x_data_adls[1]
+        combined_x_data_modality0 = multi_x_data_fall[0] + multi_x_data_adl[0]
+        combined_x_data_modality1 = multi_x_data_fall[1] + multi_x_data_adl[1]
         # Labels
-        combined_y_data_modality0 = y_data_falls[0] + y_data_adls[0]
-        combined_y_data_modality1 = y_data_falls[1] + y_data_adls[1]
+        combined_y_data_modality0 = multi_y_data_fall[0] + multi_y_data_adl[0]
+        combined_y_data_modality1 = multi_y_data_fall[1] + multi_y_data_adl[1]
+        # Info
+        combined_x_info_modality0 = multi_x_info_fall[0] + multi_x_info_adl[0]
+        combined_x_info_modality1 = multi_x_info_fall[1] + multi_x_info_adl[1]
 
-        x_data_train_modality0, x_data_test_modality0, y_data_train_modality0, y_data_test_modality0 = (
-            train_test_split(
-                combined_x_data_modality0, combined_y_data_modality0, test_size=test_size, random_state=42
-            )
-        )  # Parameters - Data, Labels, Split Ratio, Random Seed
+        (
+            x_data_train_modality0,
+            x_data_test_modality0,
+            y_data_train_modality0,
+            y_data_test_modality0,
+            x_info_train_modality0,
+            x_info_test_modality0,
+        ) = train_test_split(
+            combined_x_data_modality0,
+            combined_y_data_modality0,
+            combined_x_info_modality0,
+            test_size=test_size,
+            random_state=42,
+        )  # Parameters - Data, Labels, Folder Name, Split Ratio, Random Seed
 
-        x_data_train_modality1, x_data_test_modality1, y_data_train_modality1, y_data_test_modality1 = (
-            train_test_split(
-                combined_x_data_modality1, combined_y_data_modality1, test_size=test_size, random_state=42
-            )
-        )  # Parameters - Data, Labels, Split Ratio, Random Seed
+        (
+            x_data_train_modality1,
+            x_data_test_modality1,
+            y_data_train_modality1,
+            y_data_test_modality1,
+            x_info_train_modality1,
+            x_info_test_modality1,
+        ) = train_test_split(
+            combined_x_data_modality1,
+            combined_y_data_modality1,
+            combined_x_info_modality1,
+            test_size=test_size,
+            random_state=42,
+        )  # Parameters - Data, Labels, Folder Name, Split Ratio, Random Seed
 
-        x_data_train = [x_data_train_modality0, x_data_train_modality1]
-        x_data_test = [x_data_test_modality0, x_data_test_modality1]
-        y_data_train = [y_data_train_modality0, y_data_train_modality1]
-        y_data_test = [y_data_test_modality0, y_data_test_modality1]
+        multi_x_data_train = [x_data_train_modality0, x_data_train_modality1]
+        multi_x_data_test = [x_data_test_modality0, x_data_test_modality1]
+        multi_y_data_train = [y_data_train_modality0, y_data_train_modality1]
+        multi_y_data_test = [y_data_test_modality0, y_data_test_modality1]
+        multi_x_info_train = [x_info_train_modality0, x_info_train_modality1]
+        multi_x_info_test = [x_info_test_modality0, x_info_test_modality1]
 
         # Create separate datasets and dataloaders for training and testing
-        Test_Dataset = Multi_Dataset(y_data_test, x_data_test, window=window_len)
+        Test_Dataset = Multi_Dataset(multi_y_data_test, multi_x_data_test, window=window_len)
         test_dataloader = data.DataLoader(Test_Dataset, batch_size)
 
-        Train_Dataset = Multi_Dataset(y_data_train, x_data_train, window=window_len)
+        Train_Dataset = Multi_Dataset(multi_y_data_train, multi_x_data_train, window=window_len)
         train_dataloader = data.DataLoader(Train_Dataset, batch_size)
+
+        if demo:
+            return (Test_Dataset, test_dataloader, multi_x_data_test, multi_y_data_test, multi_x_info_test)
 
         return (Test_Dataset, test_dataloader, Train_Dataset, train_dataloader)

@@ -116,7 +116,7 @@ def equalise_frames_helper(first_index, last_index, vid_total, labels_total, cou
     modified_indices = np.round(modified_indices).astype(int)
     modified_frames = [vid_total[i] for i in modified_indices]
     modified_frame_labels = [labels_total[i] for i in modified_indices]
-    return modified_frames, modified_frame_labels
+    return modified_frames, modified_frame_labels, modified_indices
 
 
 """
@@ -166,12 +166,14 @@ def equalise_two_falls_helper(
     # 1. Equalise frames of first fall
     if fall_1_length_modality_1 >= fall_1_length_modality_2:
         # Modality 1 has longer length, so decrease it to match Modality 2 length
-        fall_1_frames_modality_1, fall_1_frame_labels_modality_1 = equalise_frames_helper(
-            fall_1_first_frame_modality_1,
-            fall_1_last_frame_modality_1,
-            vid_total_modality_1,
-            labels_total_modality_1,
-            count=fall_1_length_modality_2,
+        fall_1_frames_modality_1, fall_1_frame_labels_modality_1, fall_1_frame_indices_modality_1 = (
+            equalise_frames_helper(
+                fall_1_first_frame_modality_1,
+                fall_1_last_frame_modality_1,
+                vid_total_modality_1,
+                labels_total_modality_1,
+                count=fall_1_length_modality_2,
+            )
         )
         # Extract unmodified frames of first fall for Modality 2
         fall_1_frames_modality_2 = vid_total_modality_2[
@@ -180,14 +182,17 @@ def equalise_two_falls_helper(
         fall_1_frame_labels_modality_2 = labels_total_modality_2[
             fall_1_first_frame_modality_2 : fall_1_last_frame_modality_2 + 1
         ]
+        fall_1_frame_indices_modality_2 = np.arange(fall_1_first_frame_modality_2, fall_1_last_frame_modality_2 + 1)
     else:
         # Modality 2 has longer length, so decrease it to match Modality 1 length
-        fall_1_frames_modality_2, fall_1_frame_labels_modality_2 = equalise_frames_helper(
-            fall_1_first_frame_modality_2,
-            fall_1_last_frame_modality_2,
-            vid_total_modality_2,
-            labels_total_modality_2,
-            count=fall_1_length_modality_1,
+        fall_1_frames_modality_2, fall_1_frame_labels_modality_2, fall_1_frame_indices_modality_2 = (
+            equalise_frames_helper(
+                fall_1_first_frame_modality_2,
+                fall_1_last_frame_modality_2,
+                vid_total_modality_2,
+                labels_total_modality_2,
+                count=fall_1_length_modality_1,
+            )
         )
         # Extract unmodified frames of first fall for Modality 1
         fall_1_frames_modality_1 = vid_total_modality_1[
@@ -196,15 +201,18 @@ def equalise_two_falls_helper(
         fall_1_frame_labels_modality_1 = labels_total_modality_1[
             fall_1_first_frame_modality_1 : fall_1_last_frame_modality_1 + 1
         ]
+        fall_1_frame_indices_modality_1 = np.arange(fall_1_first_frame_modality_1, fall_1_last_frame_modality_1 + 1)
 
     # 2. Equalise intermediate frames (Same logic as Step 1)
     if intermediate_length_modality_1 >= intermediate_length_modality_2:
-        intermediate_frames_modality_1, intermediate_frame_labels_modality_1 = equalise_frames_helper(
-            fall_1_last_frame_modality_1 + 1,
-            fall_2_first_frame_modality_1 - 1,
-            vid_total_modality_1,
-            labels_total_modality_1,
-            count=intermediate_length_modality_2,
+        intermediate_frames_modality_1, intermediate_frame_labels_modality_1, intermediate_frame_indices_modality_1 = (
+            equalise_frames_helper(
+                fall_1_last_frame_modality_1 + 1,
+                fall_2_first_frame_modality_1 - 1,
+                vid_total_modality_1,
+                labels_total_modality_1,
+                count=intermediate_length_modality_2,
+            )
         )
         intermediate_frames_modality_2 = vid_total_modality_2[
             fall_1_last_frame_modality_2 + 1 : fall_2_first_frame_modality_2
@@ -212,13 +220,18 @@ def equalise_two_falls_helper(
         intermediate_frame_labels_modality_2 = labels_total_modality_2[
             fall_1_last_frame_modality_2 + 1 : fall_2_first_frame_modality_2
         ]
+        intermediate_frame_indices_modality_2 = np.arange(
+            fall_1_last_frame_modality_2 + 1, fall_2_first_frame_modality_2
+        )
     else:
-        intermediate_frames_modality_2, intermediate_frame_labels_modality_2 = equalise_frames_helper(
-            fall_1_last_frame_modality_2 + 1,
-            fall_2_first_frame_modality_2 - 1,
-            vid_total_modality_2,
-            labels_total_modality_2,
-            count=intermediate_length_modality_1,
+        intermediate_frames_modality_2, intermediate_frame_labels_modality_2, intermediate_frame_indices_modality_2 = (
+            equalise_frames_helper(
+                fall_1_last_frame_modality_2 + 1,
+                fall_2_first_frame_modality_2 - 1,
+                vid_total_modality_2,
+                labels_total_modality_2,
+                count=intermediate_length_modality_1,
+            )
         )
         intermediate_frames_modality_1 = vid_total_modality_1[
             fall_1_last_frame_modality_1 + 1 : fall_2_first_frame_modality_1
@@ -226,15 +239,20 @@ def equalise_two_falls_helper(
         intermediate_frame_labels_modality_1 = labels_total_modality_1[
             fall_1_last_frame_modality_1 + 1 : fall_2_first_frame_modality_1
         ]
+        intermediate_frame_indices_modality_1 = np.arange(
+            fall_1_last_frame_modality_1 + 1, fall_2_first_frame_modality_1
+        )
 
     # 3. Equalise frames of second fall (Same logic as Step 1)
     if fall_2_length_modality_1 >= fall_2_length_modality_2:
-        fall_2_frames_modality_1, fall_2_frame_labels_modality_1 = equalise_frames_helper(
-            fall_2_first_frame_modality_1,
-            fall_2_last_frame_modality_1,
-            vid_total_modality_1,
-            labels_total_modality_1,
-            count=fall_2_length_modality_2,
+        fall_2_frames_modality_1, fall_2_frame_labels_modality_1, fall_2_frame_indices_modality_1 = (
+            equalise_frames_helper(
+                fall_2_first_frame_modality_1,
+                fall_2_last_frame_modality_1,
+                vid_total_modality_1,
+                labels_total_modality_1,
+                count=fall_2_length_modality_2,
+            )
         )
         fall_2_frames_modality_2 = vid_total_modality_2[
             fall_2_first_frame_modality_2 : fall_2_last_frame_modality_2 + 1
@@ -242,13 +260,16 @@ def equalise_two_falls_helper(
         fall_2_frame_labels_modality_2 = labels_total_modality_2[
             fall_2_first_frame_modality_2 : fall_2_last_frame_modality_2 + 1
         ]
+        fall_2_frame_indices_modality_2 = np.arange(fall_2_first_frame_modality_2, fall_2_last_frame_modality_2 + 1)
     else:
-        fall_2_frames_modality_2, fall_2_frame_labels_modality_2 = equalise_frames_helper(
-            fall_2_first_frame_modality_2,
-            fall_2_last_frame_modality_2,
-            vid_total_modality_2,
-            labels_total_modality_2,
-            count=fall_2_length_modality_1,
+        fall_2_frames_modality_2, fall_2_frame_labels_modality_2, fall_2_frame_indices_modality_2 = (
+            equalise_frames_helper(
+                fall_2_first_frame_modality_2,
+                fall_2_last_frame_modality_2,
+                vid_total_modality_2,
+                labels_total_modality_2,
+                count=fall_2_length_modality_1,
+            )
         )
         fall_2_frames_modality_1 = vid_total_modality_1[
             fall_2_first_frame_modality_1 : fall_2_last_frame_modality_1 + 1
@@ -256,6 +277,7 @@ def equalise_two_falls_helper(
         fall_2_frame_labels_modality_1 = labels_total_modality_1[
             fall_2_first_frame_modality_1 : fall_2_last_frame_modality_1 + 1
         ]
+        fall_2_frame_indices_modality_1 = np.arange(fall_2_first_frame_modality_1, fall_2_last_frame_modality_1 + 1)
 
     # 4. Concatenate the three slices (for both modalities) and return as a single array (Which is returned for the Step 2 of the Main Function)
 
@@ -272,6 +294,14 @@ def equalise_two_falls_helper(
             fall_1_frame_labels_modality_1,
             intermediate_frame_labels_modality_1,
             fall_2_frame_labels_modality_1,
+        ),
+        axis=0,
+    )
+    fall_frame_indices_modality_1 = np.concatenate(
+        (
+            fall_1_frame_indices_modality_1,
+            intermediate_frame_indices_modality_1,
+            fall_2_frame_indices_modality_1,
         ),
         axis=0,
     )
@@ -292,8 +322,23 @@ def equalise_two_falls_helper(
         ),
         axis=0,
     )
+    fall_frame_indices_modality_2 = np.concatenate(
+        (
+            fall_1_frame_indices_modality_2,
+            intermediate_frame_indices_modality_2,
+            fall_2_frame_indices_modality_2,
+        ),
+        axis=0,
+    )
 
-    return fall_frames_modality_1, fall_frame_labels_modality_1, fall_frames_modality_2, fall_frame_labels_modality_2
+    return (
+        fall_frames_modality_1,
+        fall_frame_labels_modality_1,
+        fall_frames_modality_2,
+        fall_frame_labels_modality_2,
+        fall_frame_indices_modality_1,
+        fall_frame_indices_modality_2,
+    )
 
 
 def sync_frames(vid_total_modality_1, vid_total_modality_2, labels_total_modality_1, labels_total_modality_2):
@@ -305,16 +350,25 @@ def sync_frames(vid_total_modality_1, vid_total_modality_2, labels_total_modalit
         video_length_modality_2 = len(vid_total_modality_2)
 
         if video_length_modality_1 >= video_length_modality_2:
-            vid_total_modality_1, labels_total_modality_1 = equalise_frames_helper(
+            vid_total_modality_1, labels_total_modality_1, original_indices_modality_1 = equalise_frames_helper(
                 0, video_length_modality_1 - 1, vid_total_modality_1, labels_total_modality_1, video_length_modality_2
             )
+            original_indices_modality_2 = np.arange(0, video_length_modality_2)
         else:
-            vid_total_modality_2, labels_total_modality_2 = equalise_frames_helper(
+            vid_total_modality_2, labels_total_modality_2, original_indices_modality_2 = equalise_frames_helper(
                 0, video_length_modality_2 - 1, vid_total_modality_2, labels_total_modality_2, video_length_modality_1
             )
+            original_indices_modality_1 = np.arange(0, video_length_modality_1)
 
         # print("*Modified Length - ", len(vid_total_modality_1), len(vid_total_modality_2))
-        return vid_total_modality_1, vid_total_modality_2, labels_total_modality_1, labels_total_modality_2
+        return (
+            vid_total_modality_1,
+            vid_total_modality_2,
+            labels_total_modality_1,
+            labels_total_modality_2,
+            original_indices_modality_1,
+            original_indices_modality_2,
+        )
 
     ### Fall Video
 
@@ -372,25 +426,31 @@ def sync_frames(vid_total_modality_1, vid_total_modality_2, labels_total_modalit
     # 1. Equalise frames before the fall event across both modalities
 
     if frames_before_fall_modality_1 >= frames_before_fall_modality_2:
-        before_fall_frames_modality_1, before_fall_frame_labels_modality_1 = equalise_frames_helper(
-            0,
-            frames_before_fall_modality_1,
-            vid_total_modality_1,
-            labels_total_modality_1,
-            count=frames_before_fall_modality_2 + 1,
+        before_fall_frames_modality_1, before_fall_frame_labels_modality_1, before_fall_frame_indices_modality_1 = (
+            equalise_frames_helper(
+                0,
+                frames_before_fall_modality_1,
+                vid_total_modality_1,
+                labels_total_modality_1,
+                count=frames_before_fall_modality_2 + 1,
+            )
         )
         before_fall_frames_modality_2 = vid_total_modality_2[: frames_before_fall_modality_2 + 1]
         before_fall_frame_labels_modality_2 = labels_total_modality_2[: frames_before_fall_modality_2 + 1]
+        before_fall_frame_indices_modality_2 = np.arange(0, frames_before_fall_modality_2 + 1)
     else:
-        before_fall_frames_modality_2, before_fall_frame_labels_modality_2 = equalise_frames_helper(
-            0,
-            frames_before_fall_modality_2,
-            vid_total_modality_2,
-            labels_total_modality_2,
-            count=frames_before_fall_modality_1 + 1,
+        before_fall_frames_modality_2, before_fall_frame_labels_modality_2, before_fall_frame_indices_modality_2 = (
+            equalise_frames_helper(
+                0,
+                frames_before_fall_modality_2,
+                vid_total_modality_2,
+                labels_total_modality_2,
+                count=frames_before_fall_modality_1 + 1,
+            )
         )
         before_fall_frames_modality_1 = vid_total_modality_1[: frames_before_fall_modality_1 + 1]
         before_fall_frame_labels_modality_1 = labels_total_modality_1[: frames_before_fall_modality_1 + 1]
+        before_fall_frame_indices_modality_1 = np.arange(0, frames_before_fall_modality_1 + 1)
 
     # 2. Equalise the fall frames across both modalities
 
@@ -399,65 +459,82 @@ def sync_frames(vid_total_modality_1, vid_total_modality_2, labels_total_modalit
         # print("Single Fall : Start -", first_fall_frame_modality_1,"End -", last_fall_frame_modality_1,", Start -", first_fall_frame_modality_2,"End -", last_fall_frame_modality_2)  # fmt: skip
 
         if fall_length_modality_1 >= fall_length_modality_2:
-            fall_frames_modality_1, fall_frame_labels_modality_1 = equalise_frames_helper(
-                first_fall_frame_modality_1,
-                last_fall_frame_modality_1,
-                vid_total_modality_1,
-                labels_total_modality_1,
-                count=fall_length_modality_2,
+            fall_frames_modality_1, fall_frame_labels_modality_1, fall_frame_indices_modality_1 = (
+                equalise_frames_helper(
+                    first_fall_frame_modality_1,
+                    last_fall_frame_modality_1,
+                    vid_total_modality_1,
+                    labels_total_modality_1,
+                    count=fall_length_modality_2,
+                )
             )
             fall_frames_modality_2 = vid_total_modality_2[first_fall_frame_modality_2 : last_fall_frame_modality_2 + 1]
             fall_frame_labels_modality_2 = labels_total_modality_2[
                 first_fall_frame_modality_2 : last_fall_frame_modality_2 + 1
             ]
+            fall_frame_indices_modality_2 = np.arange(first_fall_frame_modality_2, last_fall_frame_modality_2 + 1)
         else:
-            fall_frames_modality_2, fall_frame_labels_modality_2 = equalise_frames_helper(
-                first_fall_frame_modality_2,
-                last_fall_frame_modality_2,
-                vid_total_modality_2,
-                labels_total_modality_2,
-                count=fall_length_modality_1,
+            fall_frames_modality_2, fall_frame_labels_modality_2, fall_frame_indices_modality_2 = (
+                equalise_frames_helper(
+                    first_fall_frame_modality_2,
+                    last_fall_frame_modality_2,
+                    vid_total_modality_2,
+                    labels_total_modality_2,
+                    count=fall_length_modality_1,
+                )
             )
             fall_frames_modality_1 = vid_total_modality_1[first_fall_frame_modality_1 : last_fall_frame_modality_1 + 1]
             fall_frame_labels_modality_1 = labels_total_modality_1[
                 first_fall_frame_modality_1 : last_fall_frame_modality_1 + 1
             ]
+            fall_frame_indices_modality_1 = np.arange(first_fall_frame_modality_1, last_fall_frame_modality_1 + 1)
     # Video contains two fall
     elif transitions_modality_1 == transitions_modality_2 == 4:
         # Use helper function to equalise first fall, intermediate frames and second fall
-        fall_frames_modality_1, fall_frame_labels_modality_1, fall_frames_modality_2, fall_frame_labels_modality_2 = (
-            equalise_two_falls_helper(
-                vid_total_modality_1,
-                vid_total_modality_2,
-                labels_total_modality_1,
-                labels_total_modality_2,
-                diff_modality_1,
-                diff_modality_2,
-            )
+        (
+            fall_frames_modality_1,
+            fall_frame_labels_modality_1,
+            fall_frames_modality_2,
+            fall_frame_labels_modality_2,
+            fall_frame_indices_modality_1,
+            fall_frame_indices_modality_2,
+        ) = equalise_two_falls_helper(
+            vid_total_modality_1,
+            vid_total_modality_2,
+            labels_total_modality_1,
+            labels_total_modality_2,
+            diff_modality_1,
+            diff_modality_2,
         )
 
     # 3. Equalise frames after the fall event across both modalities
 
     if frames_after_fall_modality_1 >= frames_after_fall_modality_2:
-        after_fall_frames_modality_1, after_fall_frame_labels_modality_1 = equalise_frames_helper(
-            last_fall_frame_modality_1 + 1,
-            len(vid_total_modality_1) - 1,
-            vid_total_modality_1,
-            labels_total_modality_1,
-            count=frames_after_fall_modality_2,
+        after_fall_frames_modality_1, after_fall_frame_labels_modality_1, after_fall_frame_indices_modality_1 = (
+            equalise_frames_helper(
+                last_fall_frame_modality_1 + 1,
+                len(vid_total_modality_1) - 1,
+                vid_total_modality_1,
+                labels_total_modality_1,
+                count=frames_after_fall_modality_2,
+            )
         )
         after_fall_frames_modality_2 = vid_total_modality_2[last_fall_frame_modality_2 + 1 :]
         after_fall_frame_labels_modality_2 = labels_total_modality_2[last_fall_frame_modality_2 + 1 :]
+        after_fall_frame_indices_modality_2 = np.arange(last_fall_frame_modality_2 + 1, len(vid_total_modality_2))
     else:
-        after_fall_frames_modality_2, after_fall_frame_labels_modality_2 = equalise_frames_helper(
-            last_fall_frame_modality_2 + 1,
-            len(vid_total_modality_2) - 1,
-            vid_total_modality_2,
-            labels_total_modality_2,
-            count=frames_after_fall_modality_1,
+        after_fall_frames_modality_2, after_fall_frame_labels_modality_2, after_fall_frame_indices_modality_2 = (
+            equalise_frames_helper(
+                last_fall_frame_modality_2 + 1,
+                len(vid_total_modality_2) - 1,
+                vid_total_modality_2,
+                labels_total_modality_2,
+                count=frames_after_fall_modality_1,
+            )
         )
         after_fall_frames_modality_1 = vid_total_modality_1[last_fall_frame_modality_1 + 1 :]
         after_fall_frame_labels_modality_1 = labels_total_modality_1[last_fall_frame_modality_1 + 1 :]
+        after_fall_frame_indices_modality_1 = np.arange(last_fall_frame_modality_1 + 1, len(vid_total_modality_1))
 
     # 4. Concatenate the three slices for both the modalities
 
@@ -477,6 +554,14 @@ def sync_frames(vid_total_modality_1, vid_total_modality_2, labels_total_modalit
         ),
         axis=0,
     )
+    original_indices_modality_1 = np.concatenate(
+        (
+            before_fall_frame_indices_modality_1,
+            fall_frame_indices_modality_1,
+            after_fall_frame_indices_modality_1,
+        ),
+        axis=0,
+    )
 
     vid_total_modality_2 = np.concatenate(
         (
@@ -491,6 +576,14 @@ def sync_frames(vid_total_modality_1, vid_total_modality_2, labels_total_modalit
             before_fall_frame_labels_modality_2,
             fall_frame_labels_modality_2,
             after_fall_frame_labels_modality_2,
+        ),
+        axis=0,
+    )
+    original_indices_modality_2 = np.concatenate(
+        (
+            before_fall_frame_indices_modality_2,
+            fall_frame_indices_modality_2,
+            after_fall_frame_indices_modality_2,
         ),
         axis=0,
     )
@@ -528,7 +621,14 @@ def sync_frames(vid_total_modality_1, vid_total_modality_2, labels_total_modalit
 
     # print("------------------------------------------------")
 
-    return vid_total_modality_1, vid_total_modality_2, labels_total_modality_1, labels_total_modality_2
+    return (
+        vid_total_modality_1,
+        vid_total_modality_2,
+        labels_total_modality_1,
+        labels_total_modality_2,
+        original_indices_modality_1,
+        original_indices_modality_2,
+    )
 
 
 # # For using preprocessed images from h5py as input
