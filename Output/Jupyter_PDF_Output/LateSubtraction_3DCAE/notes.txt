@@ -1,16 +1,18 @@
 Thermal, IP Trials -
-1: FPS Adjusted, MSELoss, Pad Minimum
-2: FPS Adjusted, MSELoss, Pad Minimum, BG Subtraction - GMG
-3: FPS Adjusted, MSELoss, Synchronise Video, BG Subtraction - GMG
-4: FPS Adjusted, Smooth L1 Loss, Synchronise Video, BG Subtraction - GMG
+1: Baseline - FPS Adjusted, MSELoss, Pad Minimum
+2: FPS Adjusted, BG Subtraction - Default GMG, MSELoss, Pad Minimum
+3: FPS Adjusted, BG Subtraction - Default GMG, MSELoss, Synchronise Video
+4: FPS Adjusted, BG Subtraction - Default GMG, Smooth L1 Loss, Synchronise Video
 
-Current Optimal Model - 3
+Baseline - 1
+Current Optimal Model - 4
 
 Thermal, ONI_IR Trials -
-1: Baseline - FPS Adjusted, MSE Loss, Pad 
-2: FPS Adjusted, Default GMG, Smooth L1 Loss, Synchronise Video
-3: FPS Adjusted, Default GMG, Smooth L1 Loss, Synchronise Video (Slight Architecture Change, Line No.91)
+1: Baseline - FPS Adjusted, MSE Loss, Pad Minimum
+2: FPS Adjusted, BG Subtraction - Default GMG, Smooth L1 Loss, Synchronise Video
+3: FPS Adjusted, BG Subtraction - Default GMG, Smooth L1 Loss, Synchronise Video (Slight Architecture Change, Line No.91)
 
+Baseline - 1
 Current Optimal Model - 3
 
-Note: Key Frame Extraction parameter is not for this model set due to poor results
+Note: Key Frame Extraction parameter is not set in any trial for this model set due to poor results

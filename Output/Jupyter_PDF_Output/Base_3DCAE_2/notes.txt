@@ -1,26 +1,29 @@
 IP Trials -
 1 : Baseline 
-2 : Default GMG, L1loss() {To Do}
-3 : Default GMG, L1loss(), Spatial Temporal Loss {To Do}
+2 : BG Subtraction - Default GMG, L1loss() {To Do}
+3 : BG Subtraction - Default GMG, L1loss() + Spatial Temporal Loss {To Do}
 
-Current Optimal - 1 : Baseline 
+Baseline - 1
+Current Optimal Model - 
 
 ONI_IR Trials -
 1 : Baseline 
-2 : Default GMG, L1loss() {To Do}
-3 : Default GMG, L1loss(), Spatial Temporal Loss
+2 : BG Subtraction - Default GMG, L1loss() {To Do}
+3 : BG Subtraction - Default GMG, L1loss() + Spatial Temporal Loss
 
-Current Optimal - 3 : Default GMG, L1loss(), Spatial Temporal Loss
+Baseline - 1
+Current Optimal Model - 3
 
 Thermal Trials -
 1 : Baseline
 2 : L1Loss() 
-3 : Spatial Temporal Loss
-4 : Default GMG, L1loss()
-5 : Spatial Temporal Loss, L1Loss()
-6 : Default GMG, L1loss(), Spatial Temporal Loss
+3 : MSELoss() + Spatial Temporal Loss
+4 : BG Subtraction - Default GMG, L1loss()
+5 : L1Loss() + Spatial Temporal Loss
+6 : BG Subtraction - Default GMG, L1loss() + Spatial Temporal Loss
 7 : Same as 6
 
-Current Optimal Model - 6 : Default GMG, L1loss(), Spatial Temporal Loss
+Baseline - 1
+Current Optimal Model - 6
 
-Note: Key Frame Extraction parameter is not for this model set due to poor results
+Note: Key Frame Extraction parameter is not set in any trial for this model due to poor results

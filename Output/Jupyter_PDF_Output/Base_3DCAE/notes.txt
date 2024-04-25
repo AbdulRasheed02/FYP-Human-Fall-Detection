@@ -1,51 +1,76 @@
 IP Trials -
 1 : Baseline
-2 : Default GMG with L1loss()
-3 : Default GMG with MSEloss()
-4 : Default GMG with L1loss(), FPS Adjusted Dataset
-5 : Default GMG with MSEloss(), FPS Adjusted Dataset
-6 : Default GMG with L1loss(), FPS Adjusted Dataset
-7 : Optical Flow, Default GMG with MSEloss()
-8 : Optical Flow, Default GMG with L1loss(), FPS Adjusted Dataset
+2 : BG Subtraction - Default GMG, L1loss()
+3 : BG Subtraction - Default GMG, MSEloss()
+4 : BG Subtraction - Default GMG, L1loss(), FPS Adjusted Dataset
+5 : BG Subtraction - Default GMG, MSEloss(), FPS Adjusted Dataset
+6 : BG Subtraction - Default GMG, L1loss(), FPS Adjusted Dataset
+7 : Key Frame Extraction using Optical Flow, BG Subtraction - Default GMG, MSEloss()
+8 : Key Frame Extraction using Optical Flow, BG Subtraction - Default GMG, L1loss(), FPS Adjusted Dataset
 
-Current Optimal - 3 : Default GMG with MSEloss() / 4 : Default GMG with L1loss(), FPS Adjusted Dataset
+Baseline - 1
+Current Optimal Model - 3 / 4 
 
 ONI_IR Trials -
 1 : Baseline
-2 : Default GMG with L1loss()
-3 : Default GMG with MSEloss()
-4 : Default GMG with L1loss(), FPS Adjusted Dataset
-5 : Default GMG with MSEloss(), FPS Adjusted Dataset
-6 : BG Subtraction, Default GMG with L1loss(), FPS Adjusted Dataset
-7 : Optical Flow, Default GMG with L1loss(), FPS Adjusted Dataset
-8 : Default GMG with L1loss(), FPS Adjusted Dataset
+2 : BG Subtraction - Default GMG, L1loss()
+3 : BG Subtraction - Default GMG, MSEloss()
+4 : BG Subtraction - Default GMG, L1loss(), FPS Adjusted Dataset
+5 : BG Subtraction - Default GMG, MSEloss(), FPS Adjusted Dataset
+6 : BG Subtraction - Default GMG, L1loss(), FPS Adjusted Dataset
+7 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, L1loss(), FPS Adjusted Dataset
+8 : Key Frame Extraction using Optical Flow, BG Subtraction - Default GMG, L1loss(), FPS Adjusted Dataset
 
-Current Optimal - 8 : Default GMG with L1loss(), FPS Adjusted Dataset
-                  4 : Default GMG with L1loss(), FPS Adjusted Dataset
+Baseline - 1
+Current Optimal Model - 4
                   
 Thermal Trials -
-1,2 : Baseline
-3 : Fair Comparision = False
-4 to 7 : Default GMG with various loss functions
-8 : Default MOG2 with L1loss()
-9 : Default MOG with L1loss()
-10 : Modified GMG with L1loss()
-11 : Modified MOG2 with L1loss()
-12 : Modified GMG with SmoothL1loss()
-13 : Modified MOG2 with SmoothL1loss()
-14 : Modified GMG with L1loss()
-15 : Modified GMG with L1loss()
-16 : Modified GMG with L1loss()
-17 : Modified GMG with L1loss()
-18 : Modified GMG with L1loss()
-19 : Default GMG with L1loss(), FPS Adjusted Dataset
-20 : Default GMG with L1loss(), FPS Adjusted Dataset
-21 : BG Subtraction, Default GMG with L1loss()
-22 : BG Subtraction, Default GMG with MSEloss()
-23 : BG Subtraction, Default GMG with Huberloss()
-24 : BG Subtraction, Default GMG with SmoothL1loss()
-25 : Optical Flow, L1loss()
-26 : Optical Flow, Default GMG with L1loss()
+1 : Baseline
+2 : Baseline
+3 : Baseline - Fair Comparision = False
+4 : BG Subtraction - Default GMG, MSELoss()
+5 : BG Subtraction - Default GMG, HuberLoss()
+6 : BG Subtraction - Default GMG, L1Loss()
+7 : BG Subtraction - Default GMG, SmoothL1loss()
+8 : BG Subtraction - Default MOG2, L1loss()
+9 : BG Subtraction - Default MOG, L1loss()
+10 : BG Subtraction - Modified GMG, L1loss()
+11 : BG Subtraction - Modified MOG2, L1loss()
+12 : BG Subtraction - Modified GMG, SmoothL1loss()
+13 : BG Subtraction - Modified MOG2, SmoothL1loss()
+14 : BG Subtraction - Modified GMG, L1loss()
+15 : BG Subtraction - Modified GMG, L1loss()
+16 : BG Subtraction - Modified GMG, L1loss()
+17 : BG Subtraction - Modified GMG, L1loss()
+18 : BG Subtraction - Modified GMG, L1loss()
+19 : BG Subtraction - Default GMG, L1loss(), FPS Adjusted Dataset
+20 : BG Subtraction - Default GMG, L1loss(), FPS Adjusted Dataset
+21 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, L1loss()
+22 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, MSEloss()
+23 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, Huberloss()
+24 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, SmoothL1loss()
+25 : Key Frame Extraction using Optical Flow, L1loss()
+26 : Key Frame Extraction using Optical Flow, BG Subtraction - Default GMG, L1loss()
 
-Current Optimal Model - 6 : Default GMG with L1loss()
-                        16 : Modified GMG with L1loss()
+Baseline - 1 / 2
+Current Optimal Model - 6
+                  16
+
+Notes :
+1. Default and Modified Background Subtraction Algorithms
+   Default GMG, Default MOG, Default MOG2 - Default Parameter values are used for the Algorithms
+   Modified GMG, Modified MOG, Modified MOG2 - Parameter values are tweaked for the Algorithms
+
+   Parameters which were considered to be tweaked for each algorithm:
+   a. Modified GMG - setDecisionThreshold(), setDefaultLearningRate(), setNumFrames()
+   b. Modified MOG - setHistory(), setDetectShadows(), setVarThreshold()
+   c. Modified MOG2 - setHistory(), setNMixtures(), setBackgroundRatio()
+
+   Default Parameter values are mentioned as comments in Code\Feature_Extraction\background_subtractor.py
+   Modified Parameter values for a specific trial can be seen from the screenshot attached in the trial's pdf
+   
+   Observation - 
+   Default parameter values for GMG, MOG performed better than any chosen parameter values
+   Modified parameter values for MOG2 performed better than its Default parameter values (Ex. Refer trial 11 for parameter values)
+
+   Overall Optimal algorithm was Default GMG

@@ -1,29 +1,34 @@
 IP Trials -
-1 : Baseline with BCEloss(), {To Do}
-2 : Default GMG with BCEloss(), {To Do}
-3 : Default GMG with BCEloss(), Spatial Temporal Loss {To Do}
-4 : Default GMG with BCEloss(), FPS Adjusted Dataset
+1 : Baseline - Key Frame Extraction using BG Subtraction, BCEloss() {To Do}
+2 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, BCEloss() {To Do}
+3 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, BCEloss(), FPS Adjusted Dataset
 
-Current Optimal - 4 : Default GMG with BCEloss(), FPS Adjusted Dataset
+Baselie - 1
+Current Optimal Model - 3
 
 ONI_IR Trials -
-1 : Baseline with BCEloss(), {To Do}
-2 : Default GMG with BCEloss(), {To Do}
-3 : Default GMG with BCEloss(), Spatial Temporal Loss
-4 : Default GMG with BCEloss(), FPS Adjusted Dataset
+1 : Baseline - Key Frame Extraction using BG Subtraction, BCEloss() {To Do}
+2 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, BCEloss() {To Do}
+3 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, BCEloss(), FPS Adjusted Dataset
 
-Current Optimal - 4 : Default GMG with BCEloss(), FPS Adjusted Dataset
+Baseline - 1
+Current Optimal Model - 3
 
 Thermal Trials -
-1 : Baseline with BCEloss(), Threshold - 0.61
-2 : Baseline with BCEloss(), Threshold - 0.61
-3 : Default GMG with BCEloss(), Threshold - 0.65
-4 : Baseline with BCEloss()
+1 : Baseline - Key Frame Extraction using BG Subtraction, BCEloss(), Threshold - 0.61
+2 : Baseline - Key Frame Extraction using BG Subtraction, BCEloss(), Threshold - 0.61
+3 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, BCEloss(), Threshold - 0.65
+4 : Baseline - Key Frame Extraction using BG Subtraction, BCEloss()
 5 : Same Model from Trial 1, Optimal Threshold is Found
-6 : Default GMG with BCEloss()
-7 : Default GMG with BCEloss()
-8 : Default GMG with BCEloss()
-9 : Default GMG with BCEloss()
+6 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, BCEloss()
+7 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, BCEloss()
+8 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, BCEloss()
+9 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, BCEloss()
 
-Current Optimal Model - 9 : Default GMG with BCEloss()
-        Best Baseline - 5 : Same Model from Trial 1, Optimal Threshold is Found 
+Baseline - 5
+Current Optimal Model - 9
+
+Notes
+1. Optimal Threshold -
+   Trials for which 'Threshold' value is mentioned - Threshold value was set manually
+   Trials for which 'Threshold' value is not mentioned - Optimal Threshold was calculated automatically, The value is present in the PDF

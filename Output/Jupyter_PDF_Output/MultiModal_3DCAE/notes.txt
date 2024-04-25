@@ -1,43 +1,46 @@
 Thermal, IP Trials -
-1 : Baseline - MSE Loss, Trim, metadata_set = 2
-2 : Baseline - MSE Loss, Trim (Error as all falls got trimmed from IP)
-    Baseline - MSE Loss, Pad (Memory Error as Too many frames per video, No PDF)
-3 : Baseline - FPS Adjusted, MSE Loss, Pad
+1 : Baseline - MSE Loss, Trim Maximum, metadata_set = 2
+2 : Baseline - MSE Loss, Trim Maximum (Error as all falls got trimmed from IP)
+    Baseline - MSE Loss, Pad Minimum (Memory Error as Too many frames per video, No PDF)
+3 : Baseline - FPS Adjusted, MSE Loss, Pad Minimum
 4 : FPS Adjusted, L1 Loss, Synchronise Video
-5 : FPS Adjusted, Default GMG, MSE Loss, Pad
-6 : FPS Adjusted, Default GMG, MSE Loss, Synchronise Video
-7 : FPS Adjusted, Default GMG, L1 Loss, Synchronise Video 
-8 : FPS Adjusted, Default GMG, Smooth L1 Loss, Synchronise Video
-9 : FPS Adjusted, Default GMG, Huber Loss, Synchronise Video
-10 : FPS Adjusted, Default GMG, Smooth L1 Loss + Custom Loss, Synchronise Video
+5 : FPS Adjusted, BG Subtraction - Default GMG, MSE Loss, Pad Minimum
+6 : FPS Adjusted, BG Subtraction - Default GMG, MSE Loss, Synchronise Video
+7 : FPS Adjusted, BG Subtraction - Default GMG, L1 Loss, Synchronise Video 
+8 : FPS Adjusted, BG Subtraction - Default GMG, Smooth L1 Loss, Synchronise Video
+9 : FPS Adjusted, BG Subtraction - Default GMG, Huber Loss, Synchronise Video
+10 : FPS Adjusted, BG Subtraction - Default GMG, Smooth L1 Loss + Spatial Temporal Loss, Synchronise Video
+11 : FPS Adjusted, MSE Loss + Spatial Temporal Loss, Synchronise Video 
 
+Baseline - 3
 Current Optimal Model - 10 / 8
 
 Thermal, ONI_IR Trials -
-1 : Baseline - MSE Loss, Trim, metadata_set = 2
-2 : Baseline - MSE Loss, Trim (Error as all falls got trimmed from ONI_IR)
-    Baseline - MSE Loss, Pad (Memory Error as Too many frames per video, No PDF)
-3 : Baseline - FPS Adjusted, MSE Loss, Pad
+1 : Baseline - MSE Loss, Trim Maximum, metadata_set = 2
+2 : Baseline - MSE Loss, Trim Maximum (Error as all falls got trimmed from ONI_IR)
+    Baseline - MSE Loss, Pad Minimum (Memory Error as Too many frames per video, No PDF)
+3 : Baseline - FPS Adjusted, MSE Loss, Pad Minimum
 4 : MSE Loss, Synchronise Video
 5 : FPS Adjusted, MSE Loss, Synchronise Video
 6 : FPS Adjusted, L1 Loss, Synchronise Video
 7 : FPS Adjusted, L1 Loss, Synchronise Video
-8 : FPS Adjusted, Default GMG, L1 Loss, Trim
-9 : FPS Adjusted, Default GMG, L1 Loss, Pad
-10 : FPS Adjusted, Default GMG, L1 Loss, Synchronise Video
-11 : FPS Adjusted, Default GMG, MSE Loss, Synchronise Video
-12 : FPS Adjusted, Default GMG, MSE Loss, Synchronise Video
-13 : FPS Adjusted, Default GMG, MSE Loss, Synchronise Video
-14 : FPS Adjusted, Default GMG, Smooth L1 Loss, Synchronise Video
-15 : FPS Adjusted, Default GMG, Smooth L1 Loss, Synchronise Video
-16 : FPS Adjusted, Default GMG, Huber Loss, Synchronise Video
-17 : FPS Adjusted, Default GMG, Smooth L1 Loss + Custom Loss, Synchronise Video {To Do}
+8 : FPS Adjusted, BG Subtraction - Default GMG, L1 Loss, Trim
+9 : FPS Adjusted, BG Subtraction - Default GMG, L1 Loss, Pad Minimum
+10 : FPS Adjusted, BG Subtraction - Default GMG, L1 Loss, Synchronise Video
+11 : FPS Adjusted, BG Subtraction - Default GMG, MSE Loss, Synchronise Video
+12 : FPS Adjusted, BG Subtraction - Default GMG, MSE Loss, Synchronise Video
+13 : FPS Adjusted, BG Subtraction - Default GMG, MSE Loss, Synchronise Video
+14 : FPS Adjusted, BG Subtraction - Default GMG, Smooth L1 Loss, Synchronise Video
+15 : FPS Adjusted, BG Subtraction - Default GMG, Smooth L1 Loss, Synchronise Video
+16 : FPS Adjusted, BG Subtraction - Default GMG, Huber Loss, Synchronise Video
+17 : FPS Adjusted, BG Subtraction - Default GMG, Smooth L1 Loss + Spatial Temporal Loss, Synchronise Video
 
-Current Optimal Model - 14
-                        16 
+Baseline - 3
+Current Optimal Model - 17
+                        14
 
 # Just a test
 Thermal, Thermal Trial -
 1 : Baseline
 
-Note: Key Frame Extraction parameter is not for this model set due to poor results
+Note: Key Frame Extraction parameter is not set in any trial for this model set due to poor results
