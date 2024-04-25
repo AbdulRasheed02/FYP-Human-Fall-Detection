@@ -23,7 +23,7 @@ from parameters import (
     key_frame_extraction_algorithm,
     key_frame_extraction_algorithms,
     data_augmentation,
-    folders_to_be_augmented,
+    augmentation_size,
     demo,
     demo_length,
 )
@@ -208,8 +208,14 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
 
         # Data Augmentation for ADL (Training Set for Autoencoder Model's)
         if data_augmentation:
+            # Fixed random seed
+            np.random.seed(42)
+            # Pick random numbers (indices) between 0 and len(x_info_adl). Count of numbers (indices) to be picked - 2nd parameter
+            random_indices = np.random.choice(len(x_info_adl), int(augmentation_size * len(x_info_adl)), replace=False)
+            random_indices.sort()
+            # Pick elements from x_info_adl at the random_indices
+            folders_to_be_augmented = np.array(x_info_adl)[random_indices]
             for adl_name in folders_to_be_augmented:
-                adl_name = "NonFall" + adl_name
                 try:
                     vid_total = data_dict[adl_name]["Data"][:]
                     labels_total = data_dict[adl_name]["Labels"][:]
@@ -496,8 +502,13 @@ def create_multimodal_pytorch_dataset(names, dsets, paths, window_len, fair_comp
 
             # Data Augmentation for ADL (Training Set for Autoencoder Model's)
             if data_augmentation:
+                np.random.seed(42)
+                random_indices = np.random.choice(
+                    len(x_info_adl), int(augmentation_size * len(x_info_adl)), replace=False
+                )
+                random_indices.sort()
+                folders_to_be_augmented = np.array(x_info_adl)[random_indices]
                 for adl_name in folders_to_be_augmented:
-                    adl_name = "NonFall" + adl_name
                     try:
                         vid_total = data_dict[adl_name]["Data"][:]
                         labels_total = data_dict[adl_name]["Labels"][:]

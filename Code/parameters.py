@@ -36,7 +36,7 @@ else:
 
 # Data augmentation
 data_augmentation = False  # Enable or disable data augmentation techniques
-folders_to_be_augmented = ['2', '3', '4', '5', '10', '13', '23', '28', '29',  '31', '34', '40', '41', '44', '45', '58', '62', '63', '66', '67', '73', '75', '83', '88']  # fmt: skip
+augmentation_size = 0.5  # Ratio of folders to be augmented
 
 # Key Frame Extraction (Always set true for CNN Models, Optional for Autoencoder Models)
 key_frame_extraction = False  # Enable or disable background subtraction
