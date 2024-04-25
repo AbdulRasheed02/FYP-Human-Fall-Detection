@@ -10,3 +10,5 @@ Thermal, ONI_IR Trials -
 2: FPS Adjusted, Default GMG, Smooth L1 Loss, Synchronise Video 
 
 Current Optimal Model - 2
+
+Note: Key Frame Extraction parameter is not for this model set due to poor results

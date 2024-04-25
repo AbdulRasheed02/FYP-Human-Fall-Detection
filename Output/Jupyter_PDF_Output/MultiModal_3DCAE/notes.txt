@@ -39,3 +39,5 @@ Current Optimal Model - 14
 # Just a test
 Thermal, Thermal Trial -
 1 : Baseline
+
+Note: Key Frame Extraction parameter is not for this model set due to poor results

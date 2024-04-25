@@ -22,3 +22,5 @@ Thermal Trials -
 7 : Same as 6
 
 Current Optimal Model - 6 : Default GMG, L1loss(), Spatial Temporal Loss
+
+Note: Key Frame Extraction parameter is not for this model set due to poor results
