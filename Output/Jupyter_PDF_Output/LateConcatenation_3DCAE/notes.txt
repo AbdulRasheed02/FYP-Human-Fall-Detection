@@ -2,6 +2,7 @@ Thermal, IP Trials -
 1: Baseline - FPS Adjusted, MSELoss, Pad Minimum
 2: FPS Adjusted, BG Subtraction - Default GMG, MSELoss, Synchronise Video
 3: FPS Adjusted, BG Subtraction - Default GMG, Smooth L1 Loss, Synchronise Video
+4: FPS Adjusted, BG Subtraction - Default GMG, Smooth L1 Loss, Synchronise Video + Orientation Matching {To Do}
 
 Baseline - 1
 Current Optimal Model - 3
