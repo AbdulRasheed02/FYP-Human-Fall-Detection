@@ -49,6 +49,56 @@ def get_performance_metrics(sample, output, labels, window_len):
     frame_std, frame_mean, frame_labels = get_frame_metrics(sample_data, recon_data, labels, window_len)
     return (frame_std, frame_mean, frame_labels, window_std, window_mean, window_labels)
 
+def get_cnn_metrics(output, labels, window_len):
+    #print(output.shape)
+    predicted_labels = output.reshape(output.shape[1], window_len)
+    #predicted_labels = output
+    #print(predicted_labels.shape)
+    initial_labels = shape_labels(labels)
+    window_std, window_mean, window_labels = get_cnn_window_metrics(predicted_labels, initial_labels, window_len)
+    frame_std, frame_mean, frame_labels = get_cnn_frame_metrics(predicted_labels, initial_labels, window_len)
+    return (frame_std, frame_mean, frame_labels, window_std, window_mean, window_labels)
+
+def get_cnn_window_metrics(pred_labels, initial_labels, window_len):
+    mean_window_error = []
+    std_window_error = []
+    window_labels = []
+    for tolerance in range(1, window_len):
+        stride = 1
+        windowed_labels = create_windowed_labels(initial_labels, stride, tolerance, window_len)
+        windowed_labels = windowed_labels[:, 0]
+        inwin_mean = np.mean(pred_labels, axis=1)
+        inwin_std = np.std(pred_labels, axis=1)
+        mean_window_error.append(inwin_mean)
+        std_window_error.append(inwin_std)
+        window_labels.append(windowed_labels)
+    return (mean_window_error, std_window_error, window_labels)
+
+def get_cnn_frame_metrics(pred_labels, init_labels, window_len):
+    # print(("mse shape",recon_error.shape))
+    # ------- Frame Reconstruction Error ---------------
+    # create empty matrix w/ orignal number of frames
+    mat = np.zeros((len(pred_labels) + window_len - 1, len(pred_labels)))
+    mat[:] = np.NAN
+    # dynmaically fill matrix with windows values for each frame
+    # print(len(recon_error))
+    for i in range(len(pred_labels)):
+        win = pred_labels[i]
+        mat[i : len(win) + i, i] = win
+    frame_scores = []
+    # each row corresponds to a frame across windows
+    # so calculate stats for a single frame frame(row)
+    for i in range(len(mat)):
+        row = mat[i, :]
+        mean = np.nanmean(row, axis=0)
+        std = np.nanstd(row, axis=0)
+        frame_scores.append((mean, std, mean + std * 10**3))
+
+    frame_scores = np.array(frame_scores)
+    x_std = frame_scores[:, 1]
+    x_mean = frame_scores[:, 0]
+
+    return (x_mean, x_std, init_labels)
 
 def get_multimodal_performance_metrics(sample, output, labels, window_len):
     recon_data = output.reshape(output.shape[0], output.shape[1], window_len, ht * wd)
