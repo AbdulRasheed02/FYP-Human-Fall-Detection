@@ -40,7 +40,7 @@ performance metrics
 """
 
 
-# compute performance metrics for a set of original samples (sample) and reconstructed outputs (output)
+# compute performance metrics for a set of original samples (sample) and reconstructed outputs (output) using labels
 def get_performance_metrics(sample, output, labels, window_len):
     recon_data = output.reshape(output.shape[1], window_len, ht * wd)
     sample_data = sample.reshape(sample.shape[1], window_len, ht * wd)
@@ -49,56 +49,15 @@ def get_performance_metrics(sample, output, labels, window_len):
     frame_std, frame_mean, frame_labels = get_frame_metrics(sample_data, recon_data, labels, window_len)
     return (frame_std, frame_mean, frame_labels, window_std, window_mean, window_labels)
 
-def get_cnn_metrics(output, labels, window_len):
-    #print(output.shape)
+
+# compute performance metrics for a set of predicted labels (output) and original labels (labels)
+def get_cnn_performance_metrics(output, labels, window_len):
     predicted_labels = output.reshape(output.shape[1], window_len)
-    #predicted_labels = output
-    #print(predicted_labels.shape)
-    initial_labels = shape_labels(labels)
-    window_std, window_mean, window_labels = get_cnn_window_metrics(predicted_labels, initial_labels, window_len)
-    frame_std, frame_mean, frame_labels = get_cnn_frame_metrics(predicted_labels, initial_labels, window_len)
+    original_labels = shape_labels(labels)
+    window_std, window_mean, window_labels = get_cnn_window_metrics(predicted_labels, original_labels, window_len)
+    frame_std, frame_mean, frame_labels = get_cnn_frame_metrics(predicted_labels, original_labels, window_len)
     return (frame_std, frame_mean, frame_labels, window_std, window_mean, window_labels)
 
-def get_cnn_window_metrics(pred_labels, initial_labels, window_len):
-    mean_window_error = []
-    std_window_error = []
-    window_labels = []
-    for tolerance in range(1, window_len):
-        stride = 1
-        windowed_labels = create_windowed_labels(initial_labels, stride, tolerance, window_len)
-        windowed_labels = windowed_labels[:, 0]
-        inwin_mean = np.mean(pred_labels, axis=1)
-        inwin_std = np.std(pred_labels, axis=1)
-        mean_window_error.append(inwin_mean)
-        std_window_error.append(inwin_std)
-        window_labels.append(windowed_labels)
-    return (mean_window_error, std_window_error, window_labels)
-
-def get_cnn_frame_metrics(pred_labels, init_labels, window_len):
-    # print(("mse shape",recon_error.shape))
-    # ------- Frame Reconstruction Error ---------------
-    # create empty matrix w/ orignal number of frames
-    mat = np.zeros((len(pred_labels) + window_len - 1, len(pred_labels)))
-    mat[:] = np.NAN
-    # dynmaically fill matrix with windows values for each frame
-    # print(len(recon_error))
-    for i in range(len(pred_labels)):
-        win = pred_labels[i]
-        mat[i : len(win) + i, i] = win
-    frame_scores = []
-    # each row corresponds to a frame across windows
-    # so calculate stats for a single frame frame(row)
-    for i in range(len(mat)):
-        row = mat[i, :]
-        mean = np.nanmean(row, axis=0)
-        std = np.nanstd(row, axis=0)
-        frame_scores.append((mean, std, mean + std * 10**3))
-
-    frame_scores = np.array(frame_scores)
-    x_std = frame_scores[:, 1]
-    x_mean = frame_scores[:, 0]
-
-    return (x_mean, x_std, init_labels)
 
 def get_multimodal_performance_metrics(sample, output, labels, window_len):
     recon_data = output.reshape(output.shape[0], output.shape[1], window_len, ht * wd)
@@ -120,6 +79,22 @@ def get_window_metrics(sample, output, labels, window_len):
         windowed_labels = windowed_labels[:, 0]
         inwin_mean = np.mean(recon_error, axis=1)
         inwin_std = np.std(recon_error, axis=1)
+        mean_window_error.append(inwin_mean)
+        std_window_error.append(inwin_std)
+        window_labels.append(windowed_labels)
+    return (mean_window_error, std_window_error, window_labels)
+
+
+def get_cnn_window_metrics(predicted_labels, original_labels, window_len):
+    mean_window_error = []
+    std_window_error = []
+    window_labels = []
+    for tolerance in range(1, window_len):
+        stride = 1
+        windowed_labels = create_windowed_labels(original_labels, stride, tolerance, window_len)
+        windowed_labels = windowed_labels[:, 0]
+        inwin_mean = np.mean(predicted_labels, axis=1)
+        inwin_std = np.std(predicted_labels, axis=1)
         mean_window_error.append(inwin_mean)
         std_window_error.append(inwin_std)
         window_labels.append(windowed_labels)
@@ -170,6 +145,33 @@ def get_frame_metrics(sample, output, labels, window_len):
     x_mean = frame_scores[:, 0]
 
     return (x_mean, x_std, labels)
+
+
+def get_cnn_frame_metrics(predicted_labels, original_labels, window_len):
+    # print(("mse shape",recon_error.shape))
+    # ------- Frame Reconstruction Error ---------------
+    # create empty matrix w/ orignal number of frames
+    mat = np.zeros((len(predicted_labels) + window_len - 1, len(predicted_labels)))
+    mat[:] = np.NAN
+    # dynmaically fill matrix with windows values for each frame
+    # print(len(predicted_labels))
+    for i in range(len(predicted_labels)):
+        win = predicted_labels[i]
+        mat[i : len(win) + i, i] = win
+    frame_scores = []
+    # each row corresponds to a frame across windows
+    # so calculate stats for a single frame frame(row)
+    for i in range(len(mat)):
+        row = mat[i, :]
+        mean = np.nanmean(row, axis=0)
+        std = np.nanstd(row, axis=0)
+        frame_scores.append((mean, std, mean + std * 10**3))
+
+    frame_scores = np.array(frame_scores)
+    x_std = frame_scores[:, 1]
+    x_mean = frame_scores[:, 0]
+
+    return (x_mean, x_std, original_labels)
 
 
 def get_multimodal_frame_metrics(sample, output, labels, window_len):
@@ -312,76 +314,76 @@ def get_total_performance_metrics(name, frame_stats, window_stats, window_len):
     return (final_performance_mean, final_performance_std)
 
 
-def get_cnn_performance_metrics(total_stats):
-    tp_list = []
-    tn_list = []
-    fn_list = []
-    fp_list = []
+# def get_cnn_performance_metrics(total_stats):
+#     tp_list = []
+#     tn_list = []
+#     fn_list = []
+#     fp_list = []
 
-    tpr_list = []
-    fpr_list = []
-    precision_list = []
-    recall_list = []
+#     tpr_list = []
+#     fpr_list = []
+#     precision_list = []
+#     recall_list = []
 
-    for threshold in np.arange(0, 1.01, 0.01):
-        tp = fn = fp = tn = 0
+#     for threshold in np.arange(0, 1.01, 0.01):
+#         tp = fn = fp = tn = 0
 
-        for i in range(len(total_stats)):
-            output, labels = total_stats[i]
-            output = output[0]
-            labels = labels[0]
-            for j in range(len(output)):
-                if j < len(labels):
-                    for k in range(len(output[j])):
-                        if k < len(labels[j]):
-                            if output[j][k] > threshold and labels[j][k] == 1:
-                                tp += 1
-                            elif output[j][k] > threshold and labels[j][k] == 0:
-                                fp += 1
-                            elif output[j][k] <= threshold and labels[j][k] == 1:
-                                fn += 1
-                            else:
-                                tn += 1
+#         for i in range(len(total_stats)):
+#             output, labels = total_stats[i]
+#             output = output[0]
+#             labels = labels[0]
+#             for j in range(len(output)):
+#                 if j < len(labels):
+#                     for k in range(len(output[j])):
+#                         if k < len(labels[j]):
+#                             if output[j][k] > threshold and labels[j][k] == 1:
+#                                 tp += 1
+#                             elif output[j][k] > threshold and labels[j][k] == 0:
+#                                 fp += 1
+#                             elif output[j][k] <= threshold and labels[j][k] == 1:
+#                                 fn += 1
+#                             else:
+#                                 tn += 1
 
-        if tp + fn == 0:
-            tpr = 0
-        else:
-            tpr = tp / (tp + fn)
-        if fp + tn == 0:
-            fpr = 0
-        else:
-            fpr = fp / (fp + tn)
-        if tp + fp == 0:
-            precision = 0
-        else:
-            precision = tp / (tp + fp)
-        recall = tpr
+#         if tp + fn == 0:
+#             tpr = 0
+#         else:
+#             tpr = tp / (tp + fn)
+#         if fp + tn == 0:
+#             fpr = 0
+#         else:
+#             fpr = fp / (fp + tn)
+#         if tp + fp == 0:
+#             precision = 0
+#         else:
+#             precision = tp / (tp + fp)
+#         recall = tpr
 
-        tp_list.append(tp)
-        tn_list.append(tn)
-        fn_list.append(fn)
-        fp_list.append(fp)
+#         tp_list.append(tp)
+#         tn_list.append(tn)
+#         fn_list.append(fn)
+#         fp_list.append(fp)
 
-        tpr_list.append(tpr)
-        fpr_list.append(fpr)
-        precision_list.append(precision)
-        recall_list.append(recall)
+#         tpr_list.append(tpr)
+#         fpr_list.append(fpr)
+#         precision_list.append(precision)
+#         recall_list.append(recall)
 
-    optimal_idx = np.argmax(np.array(tpr_list) - np.array(fpr_list))
+#     optimal_idx = np.argmax(np.array(tpr_list) - np.array(fpr_list))
 
-    optimal_threshold = optimal_idx * 0.01
-    print(
-        "----------------------------------\n",
-        "CNN Performance Results\n",
-        "Threshold {}\n".format(optimal_threshold),
-        "TPR {}, FPR {}, Precision {}, Recall {}\n".format(
-            tpr_list[optimal_idx], fpr_list[optimal_idx], precision_list[optimal_idx], recall_list[optimal_idx]
-        ),
-        "tn {}, fp {}, fn {}, tp {}\n".format(
-            tn_list[optimal_idx], fp_list[optimal_idx], fn_list[optimal_idx], tp_list[optimal_idx]
-        ),
-        "----------------------------------\n",
-    )
+#     optimal_threshold = optimal_idx * 0.01
+#     print(
+#         "----------------------------------\n",
+#         "CNN Performance Results\n",
+#         "Threshold {}\n".format(optimal_threshold),
+#         "TPR {}, FPR {}, Precision {}, Recall {}\n".format(
+#             tpr_list[optimal_idx], fpr_list[optimal_idx], precision_list[optimal_idx], recall_list[optimal_idx]
+#         ),
+#         "tn {}, fp {}, fn {}, tp {}\n".format(
+#             tn_list[optimal_idx], fp_list[optimal_idx], fn_list[optimal_idx], tp_list[optimal_idx]
+#         ),
+#         "----------------------------------\n",
+#     )
 
 
 def late_fusion_performance_metrics(output, labels):
@@ -558,7 +560,7 @@ def get_performance_values(vid_mean, vid_std, vid_labels):
 def shape_labels(labels):
     # generate labels
     label = labels[0, :, :]
-    windowed_labels = label  # shape (window_len, # of windows)
+    windowed_labels = label  # shape (# of windows, window_len)
     frame_labels = un_window(label)
     return frame_labels
 
@@ -583,7 +585,9 @@ def create_windowed_labels(labels, stride, tolerance, window_length):
 
 
 def un_window(windowed_data):
-    # Input: Windowed Data with format (window_length, # of windows )
+    # Input: Windowed Data with format (# of windows, window_length)
+    # This function requires windowed data in format (window_length, # of windows). So take transpose. (Output remains same)
+    windowed_data = windowed_data.transpose()
     unwindowed_data = np.zeros(windowed_data.shape[0] + windowed_data.shape[1])
     for i in range(len(unwindowed_data)):
         if i >= windowed_data.shape[1]:

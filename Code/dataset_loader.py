@@ -302,10 +302,10 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
             # convert lists into arrays with proper size
             X = np.vstack(X_list)
             X = np.reshape(X_list, (len(ind_vid) - self.window, self.window, ht, wd))
-            y = np.vstack(Y_list).T
+            y = np.vstack(Y_list)
             # X should be (window-length, 64, 64, # of windows w/in video) array
             # ex. (8, 64, 64, 192) for a 200 frame video and window size of 8
-            # y is array (8, # of windows w/in video)
+            # y is array (# of windows w/in video, 8)
             return X, y
 
     # print(len(x_data_fall))

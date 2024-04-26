@@ -41,7 +41,7 @@ augmentation_size = 0.5  # Ratio of folders to be augmented
 # Key Frame Extraction (Always set true for CNN Models, Optional for Autoencoder Models)
 key_frame_extraction = False  # Enable or disable background subtraction
 key_frame_extraction_algorithms = ["BG_Subtraction", "Optical_Flow"]
-key_frame_extraction_algorithm = key_frame_extraction_algorithms[1]
+key_frame_extraction_algorithm = key_frame_extraction_algorithms[0]
 # Minimum Percentage of non-zero pixels required to classify as a key_frame
 bg_subtraction_threshold = 0.001
 # Minimum value of Optical flow required to classify as a key_frame

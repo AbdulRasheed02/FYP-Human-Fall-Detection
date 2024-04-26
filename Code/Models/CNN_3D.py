@@ -56,7 +56,7 @@ class CNN_3D(nn.Module):
         x = F.relu(self.fc2(x))
         x = F.relu(self.fc3(x))
 
-        x = x.view(1, 8, x.shape[0])  # reshape to match the labels
+        x = x.view(1, x.shape[0], x.shape[1])  # reshape to add dimension for batch_size
 
         out = torch.sigmoid(x)  # Sigmoid activation function for binary classification
 
