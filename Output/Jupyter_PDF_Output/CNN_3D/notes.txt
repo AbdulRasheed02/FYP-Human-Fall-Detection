@@ -1,12 +1,12 @@
 IP Trials -
 1 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, BCEloss(), FPS Adjusted Dataset
 ----------- New Performance Metric Functions-----------------------------------------
-2 : Baseline - Key Frame Extraction using BG Subtraction, BCEloss() {To Do}
-3 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, BCEloss() {To Do}
-4 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, BCEloss(), FPS Adjusted Dataset {To Do}
+2 : Baseline - Key Frame Extraction using BG Subtraction, BCEloss()
+3 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, BCEloss()
+4 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, BCEloss(), FPS Adjusted Dataset
  
-Baselie - 2
-Current Optimal Model - 
+Baseline - 2
+Current Optimal Model - 3
 
 ONI_IR Trials -
 1 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, BCEloss(), FPS Adjusted Dataset
