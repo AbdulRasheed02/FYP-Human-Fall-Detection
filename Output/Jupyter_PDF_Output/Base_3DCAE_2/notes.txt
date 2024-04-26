@@ -8,7 +8,7 @@ Current Optimal Model -
 
 ONI_IR Trials -
 1 : Baseline 
-2 : BG Subtraction - Default GMG, L1loss() {To Do}
+2 : BG Subtraction - Default GMG, L1loss()
 3 : BG Subtraction - Default GMG, L1loss() + Spatial Temporal Loss
 
 Baseline - 1

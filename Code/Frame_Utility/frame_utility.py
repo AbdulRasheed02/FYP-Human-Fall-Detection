@@ -344,8 +344,23 @@ def equalise_two_falls_helper(
 def sync_frames(vid_total_modality_1, vid_total_modality_2, labels_total_modality_1, labels_total_modality_2):
 
     ### ADL Video (Class label 1 is not present in labels_total array)
-    if not ((np.any(labels_total_modality_1) == 1) & (np.any(labels_total_modality_2) == 1)):
+    # Condition is satisifed if either one of the labels_total array has no class label 1
+    if not ((np.any(labels_total_modality_1 == 1)) & (np.any(labels_total_modality_2 == 1))):
         # print("Original Length - ", len(vid_total_modality_1), len(vid_total_modality_2))
+
+        ## Edge Case - One modality has one/two fall(s), other modality has no fall.
+        # In such case, truncate video from the first fall for the modality with one/two fall(s). Essentially, video will have no fall now.
+        # Modality 1 has one/two fall(s)
+        if np.any(labels_total_modality_1 == 1):
+            first_fall_frame_modality_1 = (np.where(labels_total_modality_1 == 1)[0]).tolist()[0]
+            vid_total_modality_1 = vid_total_modality_1[:first_fall_frame_modality_1]
+            labels_total_modality_1 = labels_total_modality_1[:first_fall_frame_modality_1]
+        # Modality 2 has one/two fall(s)
+        elif np.any(labels_total_modality_2 == 1):
+            first_fall_frame_modality_2 = (np.where(labels_total_modality_2 == 1)[0]).tolist()[0]
+            vid_total_modality_2 = vid_total_modality_2[:first_fall_frame_modality_2]
+            labels_total_modality_2 = labels_total_modality_2[:first_fall_frame_modality_2]
+
         video_length_modality_1 = len(vid_total_modality_1)
         video_length_modality_2 = len(vid_total_modality_2)
 
