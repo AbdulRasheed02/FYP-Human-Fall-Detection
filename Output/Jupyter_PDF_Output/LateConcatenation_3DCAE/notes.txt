@@ -8,7 +8,8 @@ Current Optimal Model - 3
 
 Thermal, ONI_IR Trials - 
 1: Baseline - FPS Adjusted, MSE Loss, Pad Minimum
-2: FPS Adjusted, BG Subtraction - Default GMG, Smooth L1 Loss, Synchronise Video 
+2: FPS Adjusted, BG Subtraction - Default GMG, Smooth L1 Loss, Synchronise Video
+3: FPS Adjusted, BG Subtraction - Default GMG, Smooth L1 Loss, Synchronise Video + Orientation Matching {To Do} 
 
 Baseline - 1
 Current Optimal Model - 2

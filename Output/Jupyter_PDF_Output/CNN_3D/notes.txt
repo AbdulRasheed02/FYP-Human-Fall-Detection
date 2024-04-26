@@ -31,7 +31,7 @@ Thermal Trials -
 ----------- New Performance Metric Functions-----------------------------------------
 10 : Baseline - Key Frame Extraction using BG Subtraction, BCEloss()
 11 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, BCEloss()
-12 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, BCEloss(), FPS Adjusted Dataset {To Do}
+12 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, BCEloss(), FPS Adjusted Dataset
 
 Baseline - 10
 Current Optimal Model - 

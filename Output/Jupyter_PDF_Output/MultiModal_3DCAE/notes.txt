@@ -34,10 +34,10 @@ Thermal, ONI_IR Trials -
 15 : FPS Adjusted, BG Subtraction - Default GMG, Smooth L1 Loss, Synchronise Video
 16 : FPS Adjusted, BG Subtraction - Default GMG, Huber Loss, Synchronise Video
 17 : FPS Adjusted, BG Subtraction - Default GMG, Smooth L1 Loss + Spatial Temporal Loss, Synchronise Video
+18 : FPS Adjusted, BG Subtraction - Default GMG, Smooth L1 Loss, Synchronise Video + Orientation Matching
 
 Baseline - 3
-Current Optimal Model - 17
-                        14
+Current Optimal Model - 18
 
 # Just a test
 Thermal, Thermal Trial -

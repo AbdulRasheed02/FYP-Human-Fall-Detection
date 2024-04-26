@@ -416,6 +416,14 @@ def create_multimodal_pytorch_dataset(names, dsets, paths, window_len, fair_comp
                     if len(vid_total) < 10:
                         continue
 
+                    # Orientation Matching
+                    if name == "ONI_IR_T" or name == "IP_T":
+                        # Rotate Image Anticlockwise by 270 degree
+                        vid_total = np.rot90(vid_total, k=3, axes=(-3, -2))
+                        if name == "ONI_IR_T":
+                            # Flip Image Horizontally
+                            vid_total = np.flip(vid_total, axis=(-2, -1))
+
                     if key_frame_extraction:
                         # For Autoencoders, only Fall folders will be used for testing. So both Fall and ADL frames should be extracted
                         if anomaly_detection_model:
@@ -464,6 +472,14 @@ def create_multimodal_pytorch_dataset(names, dsets, paths, window_len, fair_comp
                     # print("{} - {}, {} ".format(adl_name, len(vid_total), len(labels_total)))
                     if len(vid_total) < 10:
                         continue
+
+                    # Orientation Matching
+                    if name == "ONI_IR_T" or name == "IP_T":
+                        # Rotate Image Anticlockwise by 270 degree
+                        vid_total = np.rot90(vid_total, k=3, axes=(-3, -2))
+                        if name == "ONI_IR_T":
+                            # Flip Image Horizontally
+                            vid_total = np.flip(vid_total, axis=(-2, -1))
 
                     if key_frame_extraction:
                         # For Both Autoencoders and CNNs.
@@ -515,6 +531,14 @@ def create_multimodal_pytorch_dataset(names, dsets, paths, window_len, fair_comp
                         # print("{} - {}, {} ".format(adl_name, len(vid_total), len(labels_total)))
                         if len(vid_total) < 10:
                             continue
+
+                        # Orientation Matching
+                        if name == "ONI_IR_T" or name == "IP_T":
+                            # Rotate Image Anticlockwise by 270 degree
+                            vid_total = np.rot90(vid_total, k=3, axes=(-3, -2))
+                            if name == "ONI_IR_T":
+                                # Flip Image Horizontally
+                                vid_total = np.flip(vid_total, axis=(-2, -1))
 
                         # Augment before key frame and feature extraction.
                         vid_total = augment_images(vid_total)
