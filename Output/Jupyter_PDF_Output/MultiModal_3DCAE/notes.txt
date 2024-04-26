@@ -11,9 +11,10 @@ Thermal, IP Trials -
 9 : FPS Adjusted, BG Subtraction - Default GMG, Huber Loss, Synchronise Video
 10 : FPS Adjusted, BG Subtraction - Default GMG, Smooth L1 Loss + Spatial Temporal Loss, Synchronise Video
 11 : FPS Adjusted, MSE Loss + Spatial Temporal Loss, Synchronise Video 
+12 : FPS Adjusted, BG Subtraction - Default GMG, Smooth L1 Loss, Synchronise Video + Orientation Matching
 
 Baseline - 3
-Current Optimal Model - 10 / 8
+Current Optimal Model - 12
 
 Thermal, ONI_IR Trials -
 1 : Baseline - MSE Loss, Trim Maximum, metadata_set = 2
