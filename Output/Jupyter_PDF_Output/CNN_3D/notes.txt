@@ -4,8 +4,10 @@ IP Trials -
 2 : Baseline - Key Frame Extraction using BG Subtraction, BCEloss()
 3 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, BCEloss()
 4 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, BCEloss(), FPS Adjusted Dataset
+5 : Baseline - Key Frame Extraction using Optical Flow, BCEloss() {To Do}
+6 : Key Frame Extraction using Optical Flow , BG Subtraction - Default GMG, BCEloss() {To Do}
  
-Baseline - 2
+Baseline - 2 , 5
 Current Optimal Model - 3
 
 ONI_IR Trials -
@@ -13,9 +15,11 @@ ONI_IR Trials -
 ----------- New Performance Metric Functions-----------------------------------------
 2 : Baseline - Key Frame Extraction using BG Subtraction, BCEloss() {To Do}
 3 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, BCEloss() {To Do}
-4 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, BCEloss(), FPS Adjusted Dataset {To Do}
+4 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, BCEloss(), FPS Adjusted Dataset
+5 : Baseline - Key Frame Extraction using Optical Flow, BCEloss() {To Do}
+6 : Key Frame Extraction using Optical Flow , BG Subtraction - Default GMG, BCEloss() {To Do}
 
-Baseline - 2
+Baseline - 2 , 5
 Current Optimal Model - 
 
 Thermal Trials -
@@ -32,9 +36,11 @@ Thermal Trials -
 10 : Baseline - Key Frame Extraction using BG Subtraction, BCEloss()
 11 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, BCEloss()
 12 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, BCEloss(), FPS Adjusted Dataset
+13 : Baseline - Key Frame Extraction using Optical Flow, BCEloss()
+14 : Key Frame Extraction using Optical Flow, BG Subtraction - Default GMG, BCEloss(), FPS Adjusted Dataset
 
-Baseline - 10
-Current Optimal Model - 
+Baseline - 10 , 13
+Current Optimal Model - 12
 
 Notes
 1. Optimal Threshold -
