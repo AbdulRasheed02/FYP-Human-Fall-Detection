@@ -4,8 +4,8 @@ IP Trials -
 2 : Baseline - Key Frame Extraction using BG Subtraction, BCEloss()
 3 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, BCEloss()
 4 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, BCEloss(), FPS Adjusted Dataset
-5 : Baseline - Key Frame Extraction using Optical Flow, BCEloss() {To Do}
-6 : Key Frame Extraction using Optical Flow , BG Subtraction - Default GMG, BCEloss() {To Do}
+5 : Baseline - Key Frame Extraction using Optical Flow, BCEloss()
+6 : Key Frame Extraction using Optical Flow , BG Subtraction - Default GMG, BCEloss()
  
 Baseline - 2 , 5
 Current Optimal Model - 3
