@@ -13,14 +13,14 @@ Current Optimal Model - 3
 ONI_IR Trials -
 1 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, BCEloss(), FPS Adjusted Dataset
 ----------- New Performance Metric Functions-----------------------------------------
-2 : Baseline - Key Frame Extraction using BG Subtraction, BCEloss() {To Do}
-3 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, BCEloss() {To Do}
+2 : Baseline - Key Frame Extraction using BG Subtraction, BCEloss()
+3 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, BCEloss() 
 4 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, BCEloss(), FPS Adjusted Dataset
-5 : Baseline - Key Frame Extraction using Optical Flow, BCEloss() {To Do}
-6 : Key Frame Extraction using Optical Flow , BG Subtraction - Default GMG, BCEloss() {To Do}
+5 : Baseline - Key Frame Extraction using Optical Flow, BCEloss()
+6 : Key Frame Extraction using Optical Flow , BG Subtraction - Default GMG, BCEloss() 
 
 Baseline - 2 , 5
-Current Optimal Model - 
+Current Optimal Model - 3 / 4
 
 Thermal Trials -
 1 : Baseline - Key Frame Extraction using BG Subtraction, BCEloss(), Threshold - 0.61

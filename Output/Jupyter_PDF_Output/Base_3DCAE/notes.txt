@@ -21,7 +21,7 @@ ONI_IR Trials -
 6 : BG Subtraction - Default GMG, L1loss(), FPS Adjusted Dataset
 7 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, L1loss(), FPS Adjusted Dataset
 8 : Key Frame Extraction using Optical Flow, BG Subtraction - Default GMG, L1loss(), FPS Adjusted Dataset
-9 : BG Subtraction - Default GMG, L1loss(), FPS Adjusted Dataset, Data Augmentation {To Do}
+9 : BG Subtraction - Default GMG, L1loss(), FPS Adjusted Dataset, Data Augmentation
 
 Baseline - 1
 Current Optimal Model - 4
@@ -53,7 +53,7 @@ Thermal Trials -
 24 : Key Frame Extraction using BG Subtraction, BG Subtraction - Default GMG, SmoothL1loss()
 25 : Key Frame Extraction using Optical Flow, L1loss()
 26 : Key Frame Extraction using Optical Flow, BG Subtraction - Default GMG, L1loss()
-27 : BG Subtraction - Default GMG, L1Loss(), Data Augmentation {To Do}
+27 : BG Subtraction - Default GMG, L1Loss(), Data Augmentation
 
 Baseline - 1 / 2
 Current Optimal Model - 6
