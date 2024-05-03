@@ -66,9 +66,9 @@ Notes :
 
    Parameters which were considered to be tweaked for each algorithm:
    a. Modified GMG - setDecisionThreshold(), setDefaultLearningRate(), setNumFrames()
-   b. Modified MOG - setHistory(), setDetectShadows(), setVarThreshold()
-   c. Modified MOG2 - setHistory(), setNMixtures(), setBackgroundRatio()
-
+   b. Modified MOG - setHistory(), setNMixtures(), setBackgroundRatio()
+   c. Modified MOG2 - setHistory(), setDetectShadows(), setVarThreshold()
+   
    Default Parameter values are mentioned as comments in Code\Feature_Extraction\background_subtractor.py
    Modified Parameter values for a specific trial can be seen from the screenshot attached in the trial's pdf
    

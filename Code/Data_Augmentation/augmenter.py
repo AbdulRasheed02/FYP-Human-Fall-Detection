@@ -29,13 +29,13 @@ def augment_images(image_list):
         # Random rotation
         angle = np.random.uniform(angle_range[0], angle_range[1])
         M = cv2.getRotationMatrix2D((cols / 2, rows / 2), angle, 1)
-        final_img = cv2.warpAffine(image, M, (cols, rows))
+        rotated_image = cv2.warpAffine(image, M, (cols, rows))
         # Random brightness adjustment
         brightness = np.random.uniform(brightness_range[0], brightness_range[1])
-        final_img = cv2.convertScaleAbs(final_img, alpha=brightness, beta=0)
+        brightness_adjusted_image = cv2.convertScaleAbs(rotated_image, alpha=brightness, beta=0)
         # horizontal flips
-        final_img = cv2.flip(final_img, 1)
-        final_img = np.expand_dims(final_img, axis=-1)
+        flipped_image = cv2.flip(brightness_adjusted_image, 1)
+        final_img = np.expand_dims(flipped_image, axis=-1)
         augmented_images.append(final_img)
 
     augmented_images = np.array(augmented_images)
