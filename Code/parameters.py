@@ -109,7 +109,7 @@ else:
 If true : For a video across both the modalities - fall frames will be adjusted to equal length and same period, 
 frames before and after the fall will be adjusted to equal length and same period. 
 Overall video length will be uniform. Eliminates use of pad/trim.
-If false : Pad/trim flag will be used,
+If false : pad_video flag will be used,
 """
 synchronise_video = True
 # If true : For a specific video across all the modalities, the video will be padded to match the modality with the maximum length video
@@ -152,8 +152,14 @@ elif preset == 3:
 
 """
 For Live Demo :
-For single_modality_demo.ipynb - Set preset 0 with model = models[0], background_subtraction = True / False
+
+For single_modality_demo.ipynb - Set preset 1 with model = models[0], background_subtraction = True / False
 For multi_modality_demo.ipynb - Set preset 3 with multi_modal_model = multi_modal_models[0], synchronise_video = True, background_subtraction = True / False
+
+For feature_extraction_demo.ipynb - Set preset 1 with model = models[0], background_subtraction = True, choose any background_subtraction_algorithm
+For key_frame_extraction_demo.ipynb - Set preset 1, key_frame_extraction = True in preset, any choose key_frame_extraction_algorithm
 """
 demo = False
-demo_length = 2  # No. of test videos
+# Choose folders that are common across all modalities
+adl_demo_folders = ["NonFall24", "NonFall62", "NonFall73"]  # ADL Folders
+fall_demo_folders = ["Fall2", "Fall60", "Fall73"]  # Fall Folders

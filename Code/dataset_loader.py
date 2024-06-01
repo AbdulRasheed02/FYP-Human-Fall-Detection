@@ -25,7 +25,8 @@ from parameters import (
     data_augmentation,
     augmentation_size,
     demo,
-    demo_length,
+    adl_demo_folders,
+    fall_demo_folders,
 )
 from Feature_Extraction.background_subtractor import perform_background_subtraction
 from Frame_Utility.frame_utility import fall_frame_extractor, key_frame_extractor, sync_frames
@@ -121,6 +122,9 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
                 # print("{} - {}, {} ".format(Fall_name, len(vid_total), len(labels_total)))
                 if len(vid_total) < 10:
                     continue
+                # If demo mode, skip folders not chosen for demo
+                if demo & (Fall_name not in fall_demo_folders):
+                    continue
 
                 if key_frame_extraction:
                     # For Autoencoders, only Fall folders will be used for testing. So both Fall and ADL frames should be extracted
@@ -159,16 +163,15 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
             # if len(x_data_fall) == 5:
             #     break
 
-            # Exit after 5 fall directories (For Demo)
-            if demo & (len(x_data_fall) == demo_length):
-                break
-
         for adl_name in adl:
             try:
                 vid_total = data_dict[adl_name]["Data"][:]
                 labels_total = data_dict[adl_name]["Labels"][:]
                 # print("{} - {}, {} ".format(adl_name, len(vid_total), len(labels_total)))
                 if len(vid_total) < 10:
+                    continue
+                # If demo mode, skip folders not chosen for demo
+                if demo & (adl_name not in adl_demo_folders):
                     continue
 
                 if key_frame_extraction:
@@ -202,10 +205,6 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
             # if len(x_data_adl) == 5:
             #     break
 
-            # Exit after 5 fall directories (For Demo)
-            if demo & (len(x_data_adl) == demo_length):
-                break
-
         # Data Augmentation for ADL (Training Set for Autoencoder Model's)
         if data_augmentation:
             # Fixed random seed
@@ -221,6 +220,9 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
                     labels_total = data_dict[adl_name]["Labels"][:]
                     # print("{} - {}, {} ".format(adl_name, len(vid_total), len(labels_total)))
                     if len(vid_total) < 10:
+                        continue
+                    # If demo mode, skip folders not chosen for demo
+                    if demo & (adl_name not in adl_demo_folders):
                         continue
 
                     # Augment before key frame and feature extraction.
@@ -256,10 +258,6 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
                 # Exit after 5 adl directories (For dev and debugging)
                 # if len(x_data_adl) == 5:
                 #     break
-
-                # Exit after 5 fall directories (For Demo)
-                if demo & (len(x_data_adl) == demo_length):
-                    break
 
     # pdb.set_trace()
     # %%    temp_df = my_data.loc[my_data["Video"] == int(fall), "ToD"]
@@ -320,7 +318,18 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
         train_dataloader = data.DataLoader(Train_Dataset, batch_size)
 
         if demo:
-            return (Test_Dataset, test_dataloader, x_data_fall, y_data_fall, x_info_fall)
+            return (
+                Test_Dataset,
+                test_dataloader,
+                Train_Dataset,
+                train_dataloader,
+                x_data_fall,
+                y_data_fall,
+                x_info_fall,
+                x_data_adl,
+                y_data_adl,
+                x_info_adl,
+            )
 
         return (Test_Dataset, test_dataloader, Train_Dataset, train_dataloader)
     else:
@@ -341,7 +350,18 @@ def create_pytorch_dataset(name, dset, path, window_len, fair_compairson, stride
         train_dataloader = data.DataLoader(Train_Dataset, batch_size)
 
         if demo:
-            return (Test_Dataset, test_dataloader, x_data_test, y_data_test, x_info_test)
+            return (
+                Test_Dataset,
+                test_dataloader,
+                Train_Dataset,
+                train_dataloader,
+                x_data_test,
+                y_data_test,
+                x_info_test,
+                x_data_train,
+                y_data_train,
+                x_info_train,
+            )
 
         return (Test_Dataset, test_dataloader, Train_Dataset, train_dataloader)
 
@@ -415,6 +435,9 @@ def create_multimodal_pytorch_dataset(names, dsets, paths, window_len, fair_comp
                     # print("{} - {}, {} ".format(Fall_name, len(vid_total), len(labels_total)))
                     if len(vid_total) < 10:
                         continue
+                    # If demo mode, skip folders not chosen for demo
+                    if demo & (Fall_name not in fall_demo_folders):
+                        continue
 
                     # Orientation Matching
                     if name == "ONI_IR_T" or name == "IP_T":
@@ -461,16 +484,15 @@ def create_multimodal_pytorch_dataset(names, dsets, paths, window_len, fair_comp
                 # if len(x_data_fall) == 5:
                 #     break
 
-                # Exit after 5 fall directories (For Demo)
-                if demo & (len(x_data_fall) == demo_length):
-                    break
-
             for adl_name in adl:
                 try:
                     vid_total = data_dict[adl_name]["Data"][:]
                     labels_total = data_dict[adl_name]["Labels"][:]
                     # print("{} - {}, {} ".format(adl_name, len(vid_total), len(labels_total)))
                     if len(vid_total) < 10:
+                        continue
+                    # If demo mode, skip folders not chosen for demo
+                    if demo & (adl_name not in adl_demo_folders):
                         continue
 
                     # Orientation Matching
@@ -512,10 +534,6 @@ def create_multimodal_pytorch_dataset(names, dsets, paths, window_len, fair_comp
                 # if len(x_data_adl) == 5:
                 #     break
 
-                # Exit after 5 fall directories (For Demo)
-                if demo & (len(x_data_adl) == demo_length):
-                    break
-
             # Data Augmentation for ADL (Training Set for Autoencoder Model's)
             if data_augmentation:
                 np.random.seed(42)
@@ -530,6 +548,9 @@ def create_multimodal_pytorch_dataset(names, dsets, paths, window_len, fair_comp
                         labels_total = data_dict[adl_name]["Labels"][:]
                         # print("{} - {}, {} ".format(adl_name, len(vid_total), len(labels_total)))
                         if len(vid_total) < 10:
+                            continue
+                        # If demo mode, skip folders not chosen for demo
+                        if demo & (adl_name not in adl_demo_folders):
                             continue
 
                         # Orientation Matching
@@ -573,10 +594,6 @@ def create_multimodal_pytorch_dataset(names, dsets, paths, window_len, fair_comp
                     # Exit after 5 adl directories (For dev and debugging)
                     # if len(x_data_adl) == 5:
                     #     break
-
-                    # Exit after 5 fall directories (For Demo)
-                    if demo & (len(x_data_adl) == demo_length):
-                        break
 
         """ 
         # get matching day/night label from falls
@@ -802,7 +819,18 @@ def create_multimodal_pytorch_dataset(names, dsets, paths, window_len, fair_comp
         train_dataloader = data.DataLoader(Train_Dataset, batch_size)
 
         if demo:
-            return (Test_Dataset, test_dataloader, multi_x_data_fall, multi_y_data_fall, multi_x_info_fall)
+            return (
+                Test_Dataset,
+                test_dataloader,
+                Train_Dataset,
+                train_dataloader,
+                multi_x_data_fall,
+                multi_y_data_fall,
+                multi_x_info_fall,
+                multi_x_data_adl,
+                multi_y_data_adl,
+                multi_x_info_adl,
+            )
 
         return (Test_Dataset, test_dataloader, Train_Dataset, train_dataloader)
     else:
@@ -861,6 +889,17 @@ def create_multimodal_pytorch_dataset(names, dsets, paths, window_len, fair_comp
         train_dataloader = data.DataLoader(Train_Dataset, batch_size)
 
         if demo:
-            return (Test_Dataset, test_dataloader, multi_x_data_test, multi_y_data_test, multi_x_info_test)
+            return (
+                Test_Dataset,
+                test_dataloader,
+                Train_Dataset,
+                train_dataloader,
+                multi_x_data_test,
+                multi_y_data_test,
+                multi_x_info_test,
+                multi_x_data_train,
+                multi_y_data_train,
+                multi_x_info_train,
+            )
 
         return (Test_Dataset, test_dataloader, Train_Dataset, train_dataloader)
